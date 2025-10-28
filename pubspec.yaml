@@ -1,0 +1,46 @@
+name: ridezzy_app
+description: "EV Ride-Sharing App with Auth."
+
+publish_to: 'none'
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'  # Compatible with Flutter 3.35
+  flutter: ">=3.35.0"
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.6  # State management
+  equatable: ^2.0.5  # For immutable state comparison
+  dartz: ^0.10.1  # Functional programming (Either<Failure, Success>)
+  get_it: ^7.7.0  # Dependency injection
+  shared_preferences: ^2.3.2  # Local storage (e.g., for auth token)
+  http: ^1.2.2  # API calls (replace with Dio for production)
+  intl: ^0.19.0  # Date/formatting
+  cupertino_icons: ^1.0.8
+  image_picker: ^1.1.1
+  flutter_dotenv: ^5.1.0
+  pointycastle: ^3.7.4
+  asn1lib: ^1.3.0
+  crypto: ^3.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  mockito: ^5.4.4  # Mocking for tests  
+
+
+# The following section is specific to Flutter packages.
+flutter:
+  assets:
+    - assets/accountId_87413_public_key.pem
+    - .env
+    - assets/images/
+  uses-material-design: true
+
+ 
