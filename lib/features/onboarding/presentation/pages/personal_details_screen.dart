@@ -217,16 +217,14 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: const BorderSide(
-                            color: Color.fromARGB(
-                                255, 188, 188, 188), // Unfocused border color
-                            width: 1.5, // Border thickness
+                            color: Color.fromARGB(255, 188, 188, 188),
+                            width: 1.5,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
                           borderSide: const BorderSide(
-                            color: Color(
-                                0xFFffd700), // Focused border color (blue)
+                            color: Color(0xFFffd700),
                             width: 1.5,
                           ),
                         ),
@@ -318,105 +316,82 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                     const SizedBox(height: 10),
 
                     // Reference 1
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextField(
-                          controller: _ref1Name,
-                          decoration: const InputDecoration(
-                            labelText: "Reference Name 1",
-                            prefixIcon: Icon(Icons.person_outline),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("Reference 1",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 10),
+                          _buildReferenceField(
+                            controller: _ref1Name,
+                            hint: "Reference name",
+                            icon: Icons.person_outline,
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _ref1Relation,
-                          decoration: const InputDecoration(
-                            labelText: "Reference Relation 1",
-                            prefixIcon: Icon(Icons.family_restroom),
+                          const SizedBox(height: 10),
+                          _buildReferencePhoneField(
+                            controller: _ref1Number,
+                            isVerified: _isRef1Verified,
+                            onSendOtp: () {
+                              if (_ref1Number.text.length == 10) {
+                                _showOtpPopup(0, _ref1Number.text, otpBloc);
+                              }
+                            },
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _ref1Number,
-                          keyboardType: TextInputType.phone,
-                          maxLength: 10,
-                          decoration: InputDecoration(
-                            labelText: "Reference Number 1",
-                            prefixIcon: const Icon(Icons.phone),
-                            suffixIcon: _isRef1Verified
-                                ? const Icon(Icons.verified,
-                                    color: Colors.green)
-                                : IconButton(
-                                    icon: const Icon(Icons.send),
-                                    onPressed: _ref1Number.text.length == 10
-                                        ? () {
-                                            print(
-                                                'Sending OTP for ${_ref1Number.text}');
-                                            _showOtpPopup(
-                                                0, _ref1Number.text, otpBloc);
-                                          }
-                                        : null,
-                                  ),
-                            border: const OutlineInputBorder(),
-                          ),
-                        ),
-                        if (_isRef1Verified)
-                          const Text('Phone number verified',
-                              style: TextStyle(color: Colors.green)),
-                      ],
+                          if (_isRef1Verified)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 6),
+                              child: Text('Phone number verified',
+                                  style: TextStyle(
+                                      color: Colors.green, fontSize: 13)),
+                            ),
+                        ],
+                      ),
                     ),
 
-                    const SizedBox(height: 20),
-
-                    // Reference 2
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        TextField(
-                          controller: _ref2Name,
-                          decoration: const InputDecoration(
-                            labelText: "Reference Name 2",
-                            prefixIcon: Icon(Icons.person_outline),
+// Reference 2
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("Reference 2",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 10),
+                          _buildReferenceField(
+                            controller: _ref2Name,
+                            hint: "Reference name",
+                            icon: Icons.person_outline,
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _ref2Relation,
-                          decoration: const InputDecoration(
-                            labelText: "Reference Relation 2",
-                            prefixIcon: Icon(Icons.family_restroom),
+                          const SizedBox(height: 10),
+                          _buildReferencePhoneField(
+                            controller: _ref2Number,
+                            isVerified: _isRef2Verified,
+                            onSendOtp: () {
+                              if (_ref2Number.text.length == 10) {
+                                _showOtpPopup(1, _ref2Number.text, otpBloc);
+                              }
+                            },
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        TextField(
-                          controller: _ref2Number,
-                          keyboardType: TextInputType.phone,
-                          maxLength: 10,
-                          decoration: InputDecoration(
-                            labelText: "Reference Number 2",
-                            prefixIcon: const Icon(Icons.phone),
-                            suffixIcon: _isRef2Verified
-                                ? const Icon(Icons.verified,
-                                    color: Colors.green)
-                                : IconButton(
-                                    icon: const Icon(Icons.send),
-                                    onPressed: _ref2Number.text.length == 10
-                                        ? () {
-                                            print(
-                                                'Sending OTP for ${_ref2Number.text}');
-                                            _showOtpPopup(
-                                                1, _ref2Number.text, otpBloc);
-                                          }
-                                        : null,
-                                  ),
-                            border: const OutlineInputBorder(),
-                          ),
-                        ),
-                        if (_isRef2Verified)
-                          const Text('Phone number verified',
-                              style: TextStyle(color: Colors.green)),
-                      ],
+                          if (_isRef2Verified)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 6),
+                              child: Text('Phone number verified',
+                                  style: TextStyle(
+                                      color: Colors.green, fontSize: 13)),
+                            ),
+                        ],
+                      ),
                     ),
 
                     const SizedBox(height: 30),
@@ -500,6 +475,78 @@ void main() {
       child: const MaterialApp(
         home: PersonalDetailsScreen(),
       ),
+    ),
+  );
+}
+
+Widget _buildReferenceField({
+  required TextEditingController controller,
+  required String hint,
+  required IconData icon,
+}) {
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon),
+        hintText: hint,
+        border: InputBorder.none,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+    ),
+  );
+}
+
+Widget _buildReferencePhoneField({
+  required TextEditingController controller,
+  required bool isVerified,
+  required VoidCallback onSendOtp,
+}) {
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: controller,
+            keyboardType: TextInputType.phone,
+            maxLength: 10,
+            decoration: const InputDecoration(
+              counterText: '',
+              prefixIcon: Icon(Icons.phone),
+              hintText: "Phone number",
+              border: InputBorder.none,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            ),
+          ),
+        ),
+        Container(
+          height: 48,
+          width: 48,
+          margin: const EdgeInsets.only(right: 8),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: isVerified
+                ? const Icon(Icons.verified, color: Colors.green)
+                : IconButton(
+                    icon: const Icon(Icons.settings),
+                    onPressed: onSendOtp,
+                  ),
+          ),
+        ),
+      ],
     ),
   );
 }
