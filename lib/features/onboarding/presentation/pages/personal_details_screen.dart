@@ -311,11 +311,13 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                     ),
 
                     const SizedBox(height: 20),
+                    // Emergency References (Revamped UI)
                     const Text("Emergency References",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 10),
 
-                    // Reference 1
+// Reference 1
                     Container(
                       padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 16),
@@ -333,6 +335,12 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                             controller: _ref1Name,
                             hint: "Reference name",
                             icon: Icons.person_outline,
+                          ),
+                          const SizedBox(height: 10),
+                          _buildReferenceField(
+                            controller: _ref1Relation,
+                            hint: "Reference relation",
+                            icon: Icons.family_restroom,
                           ),
                           const SizedBox(height: 10),
                           _buildReferencePhoneField(
@@ -372,6 +380,12 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                             controller: _ref2Name,
                             hint: "Reference name",
                             icon: Icons.person_outline,
+                          ),
+                          const SizedBox(height: 10),
+                          _buildReferenceField(
+                            controller: _ref2Relation,
+                            hint: "Reference relation",
+                            icon: Icons.family_restroom,
                           ),
                           const SizedBox(height: 10),
                           _buildReferencePhoneField(
@@ -541,7 +555,7 @@ Widget _buildReferencePhoneField({
             child: isVerified
                 ? const Icon(Icons.verified, color: Colors.green)
                 : IconButton(
-                    icon: const Icon(Icons.settings),
+                    icon: const Icon(Icons.send, color: Colors.blue),
                     onPressed: onSendOtp,
                   ),
           ),

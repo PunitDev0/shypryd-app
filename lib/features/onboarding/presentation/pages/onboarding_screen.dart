@@ -59,7 +59,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(15),
                     children: [
                       _buildStepTile(
                         context,
@@ -85,6 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             )
                             .hasData,
                       ),
+                      const SizedBox(height: 15),
                       _buildStepTile(
                         context,
                         step: OnboardingStep.aadhaar,
@@ -99,6 +100,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             )
                             .hasData,
                       ),
+                      const SizedBox(height: 15),
                       _buildStepTile(
                         context,
                         step: OnboardingStep.pan,
@@ -113,6 +115,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             )
                             .hasData,
                       ),
+                      const SizedBox(height: 15),
                       _buildStepTile(
                         context,
                         step: OnboardingStep.bank,
@@ -127,6 +130,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             )
                             .hasData,
                       ),
+                      const SizedBox(height: 15),
                       _buildStepTile(
                         context,
                         step: OnboardingStep.agreement,
@@ -159,7 +163,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         minimumSize: const Size(double.infinity, 50),
                       ),
                       child: const Text("Continue",
-                          style: TextStyle(color: Colors.black)),
+                          style: TextStyle(color: Colors.black, fontSize: 16)),
                     ),
                   ),
               ],
@@ -178,8 +182,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Card(
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 2,
       child: ListTile(
+        minTileHeight: 80,
         leading: Icon(
           _getStepIcon(step),
           color: Colors.black,
@@ -211,15 +216,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   IconData _getStepIcon(OnboardingStep step) {
     switch (step) {
       case OnboardingStep.personalInfo:
-        return Icons.person;
+        return Icons.person_outline;
       case OnboardingStep.aadhaar:
-        return Icons.credit_card;
+        return Icons.credit_card_outlined;
       case OnboardingStep.pan:
-        return Icons.badge;
+        return Icons.badge_outlined;
       case OnboardingStep.bank:
-        return Icons.account_balance;
+        return Icons.account_balance_outlined;
       case OnboardingStep.agreement:
-        return Icons.description;
+        return Icons.description_outlined;
     }
   }
 
