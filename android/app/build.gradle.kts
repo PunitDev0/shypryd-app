@@ -42,3 +42,16 @@ android {
 flutter {
     source = "../.."
 }
+
+// ------------------------------------------------------------
+// 1. Firebase Bill-of-Materials (BOM) – keeps all Firebase libs in sync
+dependencies {
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
+    implementation("com.google.firebase:firebase-firestore")
+    // (other app dependencies can stay here)
+}
+
+// ------------------------------------------------------------
+// 2. Apply Google-services plugin **AFTER** all other plugins
+//     (required for Firebase)
+apply(plugin = "com.google.gms.google-services")

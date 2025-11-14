@@ -4,6 +4,7 @@ import 'package:ridezzy_app/features/onboarding/presentation/pages/aadhar_screen
 import 'package:ridezzy_app/features/onboarding/presentation/pages/agreement_screen.dart';
 import 'package:ridezzy_app/features/onboarding/presentation/pages/bank_details_screen.dart';
 import 'package:ridezzy_app/features/onboarding/presentation/pages/pan_screen.dart';
+import 'package:ridezzy_app/features/onboarding/presentation/pages/profile_awaiting_screen.dart';
 import '../bloc/onboarding_bloc.dart';
 import 'personal_details_screen.dart';
 
@@ -149,23 +150,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ],
                   ),
                 ),
-                if (allStepsHaveData && !state.isSubmitting)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        print("All steps completed, proceed to Hub Selection");
-                        // Add navigation logic here
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFffd700),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: const Text("Continue",
-                          style: TextStyle(color: Colors.black, fontSize: 16)),
+                // if (allStepsHaveData && !state.isSubmitting)
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print("All steps completed, proceed to Hub Selection");
+                      // Add navigation logic here
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) =>
+                                const ProfileAwaitingApprovalScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFffd700),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      minimumSize: const Size(double.infinity, 50),
                     ),
+                    child: const Text("Continue",
+                        style: TextStyle(color: Colors.black, fontSize: 16)),
                   ),
+                ),
               ],
             );
           },
