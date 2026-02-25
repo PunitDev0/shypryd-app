@@ -1,12 +1,11 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
 
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ridezzy_app/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/otpReferences/otp_bloc.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/otpReferences/otp_event.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/otpReferences/otp_state.dart';
 
 class PersonalDetailsScreen extends StatefulWidget {
   const PersonalDetailsScreen({super.key});
@@ -16,6 +15,92 @@ class PersonalDetailsScreen extends StatefulWidget {
 }
 
 class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
+  // These should match backend enums/IDs
+  final List<String> genderOptions = ['Male', 'Female', 'Other'];
+  final Map<String, String> genderApiMap = {
+    'Male': 'Male',
+    'male': 'Male',
+    'Female': 'Female',
+    'female': 'Female',
+    'Other': 'Other',
+    'other': 'Other',
+  };
+  final Map<String, String> regionToZoneId = {
+    // TODO: Replace with actual zone IDs from backend
+    'Delhi NCR': '65c0e7e2e2b7e2b7e2b7e2b7',
+    'Mumbai': '65c0e7e2e2b7e2b7e2b7e2b8',
+    'Bangalore': '65c0e7e2e2b7e2b7e2b7e2b9',
+    'Chandigarh': '65c0e7e2e2b7e2b7e2b7e2ba',
+  };
+  Future<void> _submitPersonalInfo() async {
+    final storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'auth_token');
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Auth token not found. Please login again.')),
+      );
+      return;
+    }
+    final zoneId = regionToZoneId[serviceRegion];
+    if (zoneId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid service region.')),
+      );
+      return;
+    }
+    final genderApi = genderApiMap[gender] ?? 'male';
+    final body = {
+      "personalInformation": {
+        "fullName": _fullName.text,
+        "gender": genderApi,
+        "serviceRegion": serviceRegion,
+        "currentFullAddress": _address.text,
+        "zone": zoneId,
+        "emergencyReference1": {
+          "referenceName": _ref1Name.text,
+          "referenceRelation": _ref1Relation.text,
+          "referencePhoneNumber": _ref1Number.text,
+        },
+        "emergencyReference2": {
+          "referenceName": _ref2Name.text,
+          "referenceRelation": _ref2Relation.text,
+          "referencePhoneNumber": _ref2Number.text,
+        }
+      }
+    };
+    final url = Uri.parse('https://api.maxryd.com/api/driver/personal-info');
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      print('Personal details submitted successfully!');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Personal details submitted successfully!')),
+      );
+      print('Snackbar: Personal details submitted successfully!');
+      if (mounted) Navigator.pop(context);
+    } else {
+      String msg = 'Failed to submit: [1m${response.statusCode}[0m';
+      try {
+        final data = jsonDecode(response.body);
+        if (data['message'] != null) msg = data['message'];
+      } catch (_) {}
+      print('Personal details submission failed: $msg');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg)),
+      );
+      print('Snackbar: $msg');
+    }
+  }
+
   final TextEditingController _fullName = TextEditingController();
   final TextEditingController _address = TextEditingController();
   final TextEditingController _ref1Name = TextEditingController();
@@ -27,8 +112,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   final FocusNode _addressFocusNode = FocusNode();
   String gender = "Male";
   String serviceRegion = "Delhi NCR";
-  bool _isRef1Verified = false;
-  bool _isRef2Verified = false;
+  // Removed OTP verification flags
 
   @override
   void initState() {
@@ -54,398 +138,218 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
     super.dispose();
   }
 
-  void _showOtpPopup(int referenceIndex, String phoneNumber, OtpBloc otpBloc) {
-    final otpController = TextEditingController();
-    bool isLoading = false;
-    String? errorMessage;
-    StreamSubscription? subscription;
+  // Removed OTP popup and verification logic for references
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext popupContext) => BlocProvider.value(
-        value: otpBloc,
-        child: StatefulBuilder(
-          builder: (BuildContext popupContext, StateSetter popupSetState) {
-            return AlertDialog(
-              title: const Text('Enter OTP'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFf5c034),
+        elevation: 0,
+        centerTitle: true,
+        title: const Text('Personal Details',
+            style: TextStyle(color: Colors.black)),
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            const Text("Tell us about yourself",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 6),
+            const Text(
+                "We need some basic information to set up your driver profile",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal)),
+            const SizedBox(height: 20),
+            // Full Name
+            TextFormField(
+              controller: _fullName,
+              cursorColor: Colors.black,
+              decoration: InputDecoration(
+                labelText: "Full Name",
+                labelStyle: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                    fontSize: 14),
+                prefixIcon: const Icon(Icons.person_outline),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: Color.fromARGB(255, 188, 188, 188),
+                    width: 1.5,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: Color(0xFFf5c034),
+                    width: 1.5,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+            const Text("Gender", style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                _genderButton("Male", Icons.male),
+                _genderButton("Female", Icons.female),
+                _genderButton("Others", Icons.transgender),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+            const Text("Service Region",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              value: serviceRegion,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.location_on_outlined),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: Color.fromARGB(255, 188, 188, 188),
+                    width: 1.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: Color(0xFFf5c034),
+                    width: 1.5,
+                  ),
+                ),
+              ),
+              items: ['Delhi NCR', 'Mumbai', 'Bangalore', 'Chandigarh']
+                  .map((region) {
+                return DropdownMenuItem(value: region, child: Text(region));
+              }).toList(),
+              onChanged: (val) => setState(() => serviceRegion = val!),
+            ),
+
+            const SizedBox(height: 20),
+            const Text("Current Address",
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Container(
+              height: 120.0,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: const Color.fromARGB(255, 188, 188, 188),
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
                 children: [
-                  Text('OTP sent to +91$phoneNumber'),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: otpController,
-                    keyboardType: TextInputType.number,
-                    maxLength: 4,
-                    decoration: InputDecoration(
-                      labelText: 'OTP',
-                      border: const OutlineInputBorder(),
-                      errorText: errorMessage,
+                  const SizedBox(
+                    width: 60.0,
+                    child: Icon(Icons.home_outlined, size: 24.0),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      maxLines: 5,
+                      controller: _address,
+                      cursorColor: Colors.black,
+                      decoration: const InputDecoration(
+                        hintText: "Enter your full address",
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 10.0),
+                      ),
                     ),
                   ),
                 ],
               ),
-              actions: [
-                TextButton(
-                  onPressed:
-                      isLoading ? null : () => Navigator.pop(popupContext),
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () {
-                          if (otpController.text.length == 4) {
-                            popupSetState(() {
-                              isLoading = true;
-                            });
-                            otpBloc.add(
-                              VerifyOtpEvent(
-                                phoneNumber: phoneNumber,
-                                otp: otpController.text,
-                                referenceIndex: referenceIndex,
-                              ),
-                            );
-                          } else {
-                            popupSetState(() {
-                              errorMessage = 'Please enter a valid 4-digit OTP';
-                            });
-                          }
-                        },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFffd700)),
-                  child: isLoading
-                      ? const CircularProgressIndicator(color: Colors.black)
-                      : const Text('Verify',
-                          style: TextStyle(color: Colors.black)),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    ).then((_) {
-      // Cleanup subscription when dialog is closed
-      subscription?.cancel();
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    });
+            ),
 
-    // Listen to OtpBloc state changes
-    subscription = otpBloc.stream.listen((state) {
-      if (state is OtpVerified) {
-        if (state.referenceIndex == 0 && mounted) {
-          setState(() {
-            _isRef1Verified = true;
-          });
-          Navigator.pop(context); // Pop the dialog
-        } else if (state.referenceIndex == 1 && mounted) {
-          setState(() {
-            _isRef2Verified = true;
-          });
-          Navigator.pop(context); // Pop the dialog
-        }
-      } else if (state is OtpError && mounted) {
-        setState(() {
-          errorMessage = state.message;
-          isLoading = false;
-        });
-      }
-    });
-
-    otpBloc.add(
-        SendOtpEvent(phoneNumber: phoneNumber, referenceIndex: referenceIndex));
-    print('OTP popup shown for $phoneNumber'); // Debug print
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          OtpBloc(authRemoteDataSource: AuthRemoteDataSourceImpl()),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFffd700),
-          elevation: 0,
-          centerTitle: true,
-          title: const Text('Personal Details',
-              style: TextStyle(color: Colors.black)),
-          iconTheme: const IconThemeData(color: Colors.black),
-        ),
-        body: BlocListener<OnboardingBloc, OnboardingState>(
-          listener: (context, state) {
-            if (state is OnboardingStepCompleted) {
-              Navigator.pop(context); // Navigate back only on Continue
-            } else if (state is OnboardingFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
-              );
-            }
-          },
-          child: Builder(
-            builder: (context) {
-              final otpBloc = context.read<OtpBloc>();
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ListView(
-                  children: [
-                    const Text("Tell us about yourself",
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 6),
-                    const Text(
-                        "We need some basic information to set up your driver profile",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.normal)),
-                    const SizedBox(height: 20),
-                    // Full Name
-                    TextFormField(
-                      controller: _fullName,
-                      cursorColor: Colors.black,
-                      decoration: InputDecoration(
-                        labelText: "Full Name",
-                        labelStyle: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 14),
-                        prefixIcon: const Icon(Icons.person_outline),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 188, 188, 188),
-                            width: 1.5,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFffd700),
-                            width: 1.5,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 30),
-                    const Text("Gender",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        _genderButton("Male", Icons.male),
-                        _genderButton("Female", Icons.female),
-                        _genderButton("Others", Icons.transgender),
-                      ],
-                    ),
-
-                    const SizedBox(height: 20),
-                    const Text("Service Region",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    DropdownButtonFormField<String>(
-                      value: serviceRegion,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.location_on_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color.fromARGB(255, 188, 188, 188),
-                            width: 1.0,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: Color(0xFFffd700),
-                            width: 1.5,
-                          ),
-                        ),
-                      ),
-                      items: ['Delhi NCR', 'Mumbai', 'Bangalore', 'Chandigarh']
-                          .map((region) {
-                        return DropdownMenuItem(
-                            value: region, child: Text(region));
-                      }).toList(),
-                      onChanged: (val) => setState(() => serviceRegion = val!),
-                    ),
-
-                    const SizedBox(height: 20),
-                    const Text("Current Address",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 120.0,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: const Color.fromARGB(255, 188, 188, 188),
-                          width: 1.5,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          const SizedBox(
-                            width: 60.0,
-                            child: Icon(Icons.home_outlined, size: 24.0),
-                          ),
-                          Expanded(
-                            child: TextFormField(
-                              maxLines: 5,
-                              controller: _address,
-                              cursorColor: Colors.black,
-                              decoration: const InputDecoration(
-                                hintText: "Enter your full address",
-                                border: InputBorder.none,
-                                contentPadding:
-                                    EdgeInsets.symmetric(vertical: 10.0),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-                    // Emergency References (Revamped UI)
-                    const Text("Emergency References",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    const SizedBox(height: 10),
+            const SizedBox(height: 20),
+            // Emergency References (Revamped UI)
+            const Text("Emergency References",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 10),
 
 // Reference 1
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Reference 1",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 10),
-                          _buildReferenceField(
-                            controller: _ref1Name,
-                            hint: "Reference name",
-                            icon: Icons.person_outline,
-                          ),
-                          const SizedBox(height: 10),
-                          _buildReferenceField(
-                            controller: _ref1Relation,
-                            hint: "Reference relation",
-                            icon: Icons.family_restroom,
-                          ),
-                          const SizedBox(height: 10),
-                          _buildReferencePhoneField(
-                            controller: _ref1Number,
-                            isVerified: _isRef1Verified,
-                            onSendOtp: () {
-                              if (_ref1Number.text.length == 10) {
-                                _showOtpPopup(0, _ref1Number.text, otpBloc);
-                              }
-                            },
-                          ),
-                          if (_isRef1Verified)
-                            const Padding(
-                              padding: EdgeInsets.only(top: 6),
-                              child: Text('Phone number verified',
-                                  style: TextStyle(
-                                      color: Colors.green, fontSize: 13)),
-                            ),
-                        ],
-                      ),
-                    ),
+            Container(
+              padding: const EdgeInsets.all(12),
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Reference 1",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  _buildReferenceField(
+                    controller: _ref1Name,
+                    hint: "Reference name",
+                    icon: Icons.person_outline,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildReferenceField(
+                    controller: _ref1Relation,
+                    hint: "Reference relation",
+                    icon: Icons.family_restroom,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildReferencePhoneFieldSimple(
+                    controller: _ref1Number,
+                  ),
+                ],
+              ),
+            ),
 
 // Reference 2
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Reference 2",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 10),
-                          _buildReferenceField(
-                            controller: _ref2Name,
-                            hint: "Reference name",
-                            icon: Icons.person_outline,
-                          ),
-                          const SizedBox(height: 10),
-                          _buildReferenceField(
-                            controller: _ref2Relation,
-                            hint: "Reference relation",
-                            icon: Icons.family_restroom,
-                          ),
-                          const SizedBox(height: 10),
-                          _buildReferencePhoneField(
-                            controller: _ref2Number,
-                            isVerified: _isRef2Verified,
-                            onSendOtp: () {
-                              if (_ref2Number.text.length == 10) {
-                                _showOtpPopup(1, _ref2Number.text, otpBloc);
-                              }
-                            },
-                          ),
-                          if (_isRef2Verified)
-                            const Padding(
-                              padding: EdgeInsets.only(top: 6),
-                              child: Text('Phone number verified',
-                                  style: TextStyle(
-                                      color: Colors.green, fontSize: 13)),
-                            ),
-                        ],
-                      ),
-                    ),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Reference 2",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+                  _buildReferenceField(
+                    controller: _ref2Name,
+                    hint: "Reference name",
+                    icon: Icons.person_outline,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildReferenceField(
+                    controller: _ref2Relation,
+                    hint: "Reference relation",
+                    icon: Icons.family_restroom,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildReferencePhoneFieldSimple(
+                    controller: _ref2Number,
+                  ),
+                ],
+              ),
+            ),
 
-                    const SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: _isRef1Verified && _isRef2Verified
-                          ? () {
-                              context.read<OnboardingBloc>().add(
-                                    SubmitPersonalDetails(
-                                      fullName: _fullName.text,
-                                      gender: gender,
-                                      serviceRegion: serviceRegion,
-                                      address: _address.text,
-                                      references: [
-                                        {
-                                          'name': _ref1Name.text,
-                                          'relation': _ref1Relation.text,
-                                          'number': _ref1Number.text,
-                                        },
-                                        {
-                                          'name': _ref2Name.text,
-                                          'relation': _ref2Relation.text,
-                                          'number': _ref2Number.text,
-                                        },
-                                      ],
-                                    ),
-                                  );
-                            }
-                          : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFffd700),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: const Text("Continue",
-                          style: TextStyle(color: Colors.black)),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
+            const SizedBox(height: 30),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: _submitPersonalInfo,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFf5c034),
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              child:
+                  const Text("Continue", style: TextStyle(color: Colors.black)),
+            ),
+          ],
         ),
       ),
     );
@@ -460,7 +364,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 4),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFffd700) : Colors.white,
+            color: isSelected ? const Color(0xFFf5c034) : Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Colors.grey.shade300),
           ),
@@ -516,51 +420,25 @@ Widget _buildReferenceField({
   );
 }
 
-Widget _buildReferencePhoneField({
+Widget _buildReferencePhoneFieldSimple({
   required TextEditingController controller,
-  required bool isVerified,
-  required VoidCallback onSendOtp,
 }) {
   return Container(
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(10),
     ),
-    child: Row(
-      children: [
-        Expanded(
-          child: TextField(
-            controller: controller,
-            keyboardType: TextInputType.phone,
-            maxLength: 10,
-            decoration: const InputDecoration(
-              counterText: '',
-              prefixIcon: Icon(Icons.phone),
-              hintText: "Phone number",
-              border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            ),
-          ),
-        ),
-        Container(
-          height: 48,
-          width: 48,
-          margin: const EdgeInsets.only(right: 8),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: isVerified
-                ? const Icon(Icons.verified, color: Colors.green)
-                : IconButton(
-                    icon: const Icon(Icons.send, color: Colors.blue),
-                    onPressed: onSendOtp,
-                  ),
-          ),
-        ),
-      ],
+    child: TextField(
+      controller: controller,
+      keyboardType: TextInputType.phone,
+      maxLength: 10,
+      decoration: const InputDecoration(
+        counterText: '',
+        prefixIcon: Icon(Icons.phone),
+        hintText: "Phone number",
+        border: InputBorder.none,
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
     ),
   );
 }

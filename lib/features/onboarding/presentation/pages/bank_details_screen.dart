@@ -1,12 +1,15 @@
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_bloc.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_event.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_state.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
+    as onboarding;
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
+    as onboardingEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/bank/bank_bloc.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/bank/bank_event.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/bank/bank_state.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
-    as onboarding;
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
-    as onboardingEvent;
 
 class BankDetailsScreen extends StatefulWidget {
   const BankDetailsScreen({super.key});
@@ -16,6 +19,73 @@ class BankDetailsScreen extends StatefulWidget {
 }
 
 class _BankDetailsScreenState extends State<BankDetailsScreen> {
+  Future<void> submitBankDetails(BuildContext context) async {
+    final bankName = bankNameController.text.trim();
+    final accountNumber = accountNumberController.text.trim();
+    final confirmAccountNumber = confirmAccountNumberController.text.trim();
+    final ifscCode = ifscCodeController.text.trim().toUpperCase();
+
+    // Simple IFSC validation: 4 letters, 0, 6 digits (e.g., SBIN0001234)
+    final ifscRegExp = RegExp(r'^[A-Z]{4}0[A-Z0-9]{6}$');
+    if (!ifscRegExp.hasMatch(ifscCode)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid IFSC code.')),
+      );
+      return;
+    }
+
+    final body = {
+      "bankName": bankName,
+      "accountNumber": accountNumber,
+      "confirmAccountNumber": confirmAccountNumber,
+      "ifscCode": ifscCode,
+    };
+
+    // Get token from secure storage
+    String? token;
+    try {
+      final storage = FlutterSecureStorage();
+      token = await storage.read(key: 'auth_token');
+    } catch (_) {
+      token = null;
+    }
+    print('BANK SUBMIT: body = ' + body.toString());
+    print('BANK SUBMIT: token = $token');
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('Auth token not found. Please login again.')),
+      );
+      return;
+    }
+    final response = await http.put(
+      Uri.parse('https://api.maxryd.com/api/driver/bank'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(body),
+    );
+    print('BANK SUBMIT: response = ${response.statusCode} ${response.body}');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Bank details submitted successfully!')),
+      );
+      await Future.delayed(const Duration(milliseconds: 500));
+      Navigator.of(context).pop();
+    } else {
+      String msg = 'Failed to submit bank details: ${response.statusCode}';
+      try {
+        final data = jsonDecode(response.body);
+        if (data['message'] != null) msg = data['message'];
+      } catch (_) {}
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg)),
+      );
+    }
+  }
+
   final bankNameController = TextEditingController();
   final accountNumberController = TextEditingController();
   final confirmAccountNumberController = TextEditingController();
@@ -30,7 +100,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              backgroundColor: const Color(0xFFffd700),
+              backgroundColor: const Color(0xFFf5c034),
               elevation: 0,
               centerTitle: true,
               title: const Text(
@@ -104,12 +174,12 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                               suffixIcon: const Icon(Icons.arrow_drop_down),
                               enabledBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
-                                    color: Color(0xFFffd700), width: 2),
+                                    color: Color(0xFFf5c034), width: 2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
-                                    color: Color(0xFFffd700), width: 2),
+                                    color: Color(0xFFf5c034), width: 2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
@@ -129,12 +199,12 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                               hintText: "Enter your account number",
                               enabledBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
-                                    color: Color(0xFFffd700), width: 2),
+                                    color: Color(0xFFf5c034), width: 2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
-                                    color: Color(0xFFffd700), width: 2),
+                                    color: Color(0xFFf5c034), width: 2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
@@ -155,12 +225,12 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                               hintText: "Re-enter your account number",
                               enabledBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
-                                    color: Color(0xFFffd700), width: 2),
+                                    color: Color(0xFFf5c034), width: 2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
-                                    color: Color(0xFFffd700), width: 2),
+                                    color: Color(0xFFf5c034), width: 2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
@@ -181,12 +251,12 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                               hintText: "Enter IFSC code (e.g., SBIN0001234)",
                               enabledBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
-                                    color: Color(0xFFffd700), width: 2),
+                                    color: Color(0xFFf5c034), width: 2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
-                                    color: Color(0xFFffd700), width: 2),
+                                    color: Color(0xFFf5c034), width: 2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
@@ -225,21 +295,11 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                             child: ElevatedButton(
                               onPressed: state is BankLoading
                                   ? null
-                                  : () {
-                                      context.read<BankBloc>().add(
-                                            SubmitBankDetails(
-                                              bankName: bankNameController.text,
-                                              accountNumber:
-                                                  accountNumberController.text,
-                                              confirmAccountNumber:
-                                                  confirmAccountNumberController
-                                                      .text,
-                                              ifscCode: ifscCodeController.text,
-                                            ),
-                                          );
+                                  : () async {
+                                      await submitBankDetails(context);
                                     },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFffd700),
+                                backgroundColor: const Color(0xFFf5c034),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),

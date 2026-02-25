@@ -1,6 +1,6 @@
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_event.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/bank/bank_event.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/bank/bank_state.dart';
 
 class BankBloc extends Bloc<BankEvent, BankState> {
   String bankName = '';

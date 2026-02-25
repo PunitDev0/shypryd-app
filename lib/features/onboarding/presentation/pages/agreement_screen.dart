@@ -1,10 +1,9 @@
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
+    as onboardingEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
     as onboarding;
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
-    as onboardingEvent;
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 
 class UserAgreementScreen extends StatefulWidget {
   const UserAgreementScreen({super.key});
@@ -39,18 +38,21 @@ class _UserAgreementScreenState extends State<UserAgreementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<onboarding.OnboardingBloc, OnboardingState>(
+    return BlocBuilder<onboarding.OnboardingBloc, onboarding.OnboardingState>(
       builder: (context, state) {
         final bloc = context.read<onboarding.OnboardingBloc>();
         return Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
-              backgroundColor: const Color(0xFFffd700),
+              backgroundColor: const Color(0xFFf5c034),
               elevation: 0,
               centerTitle: true,
               title: const Text(
                 'User Agreement',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -64,16 +66,9 @@ class _UserAgreementScreenState extends State<UserAgreementScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "User Agreement",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                     const SizedBox(height: 8),
                     const Text(
-                      "Please read the agreement carefully before proceeding.",
+                      "Please read the agreement carefully and fully before proceeding.",
                       style: TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(height: 20),
@@ -81,14 +76,68 @@ class _UserAgreementScreenState extends State<UserAgreementScreen> {
                       child: SingleChildScrollView(
                         controller: _scrollController,
                         child: const Text(
-                          // Dummy text - replace with actual agreement text later
-                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n\n"
-                          "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.\n\n"
-                          "Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?\n\n"
-                          "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.\n\n"
-                          "Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.\n\n"
-                          "Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.\n\n"
-                          "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.",
+                          '''Combined Policy – Maxryd Private Limited
+
+This Combined Policy includes the Terms of Service, Privacy Policy, and Refund & Cancellation Policy of Maxryd Private Limited. By registering on the Maxryd mobile application, website, or platform, and by clicking “I Agree”, you confirm that you have read, understood, and accepted all the terms and conditions mentioned below.
+
+1. Company Details
+Legal Name: Maxryd Private Limited
+CIN: U49231KA2026PTC213656
+Registered Address:
+H-1003, Near Hoodi Metro Station,
+Hoodi, Whitefield, Bangalore,
+Karnataka – 560048, India
+
+2. User Eligibility
+For low-speed electric scooters:
+- Minimum age: 16 years
+- No driving license required (as per applicable laws)
+
+For high-speed electric scooters:
+- Minimum age: 18 years
+- Valid driving license is mandatory
+
+Users must provide true and accurate information and comply with all applicable laws and traffic rules.
+
+3. Services Offered
+Maxryd provides electric scooter rental services for delivery partners, gig workers, and individuals. Service availability may vary by location.
+
+4. User Responsibilities
+Users agree to use vehicles responsibly, follow traffic rules, avoid misuse or damage, bear responsibility for fines or penalties, and keep login credentials confidential.
+
+5. Payments & Charges
+All applicable rent, deposits, and charges must be paid in advance. Payments are processed through authorized payment gateways. Non-payment may lead to suspension or termination of services.
+
+6. Refund & Security Deposit Policy
+Rental Amount:
+All rental amounts paid are strictly non-refundable.
+
+Security Deposit:
+The security deposit will be refunded only if the rider completes a minimum of 2 months of active usage. If the rider does not complete 2 months, the security deposit will not be refunded. Refunds are subject to no pending dues, no major damages, and proper return of vehicle and accessories.
+
+7. Cancellation Policy
+Maxryd does not offer any cancellation policy. Once registration or vehicle allocation is completed, it cannot be cancelled.
+
+8. Privacy & Data Usage
+Maxryd may collect personal, KYC, payment, service usage, and technical data for service delivery, operations, compliance, and communication. Personal data is not sold.
+
+9. Data Security & Retention
+Reasonable security measures are used to protect data. Data is retained only as required for legal or operational purposes.
+
+10. Limitation of Liability
+Maxryd is not liable for indirect losses, loss of income, or damages caused due to misuse, negligence, or rule violations.
+
+11. Account Suspension & Termination
+Maxryd reserves the right to suspend or terminate accounts in case of false information, policy violations, unpaid dues, or misuse of vehicles.
+
+12. Policy Updates
+Maxryd may update this policy at any time. Continued use of the platform implies acceptance of the updated terms.
+
+13. Governing Law & Jurisdiction
+This policy is governed by the laws of India. Courts in Bangalore, Karnataka shall have exclusive jurisdiction.
+
+14. Acceptance of Policy
+By clicking “I Agree”, you confirm that you have read, understood, and accepted this policy and agree to comply with all its terms.''',
                           style: TextStyle(fontSize: 14),
                         ),
                       ),
@@ -128,7 +177,7 @@ class _UserAgreementScreenState extends State<UserAgreementScreen> {
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFffd700),
+                          backgroundColor: const Color(0xFFf5c034),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

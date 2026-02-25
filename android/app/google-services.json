@@ -1,43 +1,27 @@
 {
   "project_info": {
-    "project_number": "900652632563",
-    "project_id": "ridezzy-vvj1mf",
-    "storage_bucket": "ridezzy-vvj1mf.firebasestorage.app"
+    "project_number": "335767963568",
+    "firebase_url": "https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "maxryd-2026",
+    "storage_bucket": "maxryd-2026.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:900652632563:android:59d7b77320b42dd01f6a86",
+        "mobilesdk_app_id": "1:335767963568:android:2787fb892fb7c228517875",
         "android_client_info": {
-          "package_name": "com.example.ridezzy_app"
+          "package_name": "com.maxryd.app"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "900652632563-73k293qcu8eskmho5cpkjpib4pmetm05.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC4s39Kjcfl59nSqCZr6vEEwao5Mrd9mUY"
+          "current_key": "AIzaSyB6q1NImvNF9kmAFbcp9dT52x_6MpW1Yus"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "900652632563-73k293qcu8eskmho5cpkjpib4pmetm05.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "900652632563-pcerna2llvf3dld6t2s05ltfatbt1dcm.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.mycompany.ridezzy"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

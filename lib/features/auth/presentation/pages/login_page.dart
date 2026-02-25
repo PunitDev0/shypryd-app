@@ -1,9 +1,12 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
+import 'package:Maxryd_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ridezzy_app/features/home/presentation/pages/home_page.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/pages/onboarding_screen.dart';
+
 import '../bloc/auth_bloc.dart';
 
 class LoginPage extends StatefulWidget {
@@ -55,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is AuthPhoneSent) {
             setState(() {
               _isOtpMode = true;
@@ -71,6 +74,11 @@ class _LoginPageState extends State<LoginPage> {
                   content: Text('Authenticated! Welcome, ${state.user.phone}')),
             );
 
+            // Save token securely
+            final storage = FlutterSecureStorage();
+            await storage.write(
+                key: 'auth_token', value: state.authResponse.token);
+
             if (state.isNewUser) {
               // 🟡 Navigate to onboarding flow
               Navigator.pushReplacement(
@@ -84,6 +92,11 @@ class _LoginPageState extends State<LoginPage> {
               );
             } else {
               // ✅ Existing user goes directly to home
+              // Existing user → save driverId if available in state.user.id
+              if (state.user.id.isNotEmpty) {
+                await storage.write(key: 'driverId', value: state.user.id);
+                print('Driver ID saved after login: ${state.user.id}');
+              }
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => const HomeScreen()),
@@ -117,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       const SizedBox(height: 100), // Top spacing for status bar
                       const Text(
-                        'Ridezzy',
+                        'MaxRyd',
                         style: TextStyle(
                           fontSize: 52, // Slightly smaller for responsiveness
                           fontWeight: FontWeight.bold,
@@ -171,7 +184,7 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(
                                   color: Color(
-                                      0xFFffd700), // Focused border color (blue)
+                                      0xFFf5c034), // Focused border color (blue)
                                   width: 1.5,
                                 ),
                               ),
@@ -234,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(
                                   color: Color(
-                                      0xFFffd700), // Focused border color (blue)
+                                      0xFFf5c034), // Focused border color (blue)
                                   width: 1.5,
                                 ),
                               ),
@@ -254,7 +267,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: TextFormField(
                             controller: _otpController,
                             keyboardType: TextInputType.number,
-                            maxLength: 4,
+                            maxLength: 6,
                             decoration: InputDecoration(
                               labelText: 'Enter OTP',
                               labelStyle: const TextStyle(color: Colors.black),
@@ -273,7 +286,7 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(
                                   color: Color(
-                                      0xFFffd700), // Focused border color (blue)
+                                      0xFFf5c034), // Focused border color (blue)
                                   width: 1.5,
                                 ),
                               ),
@@ -286,7 +299,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             onFieldSubmitted: (value) {
-                              if (value.length == 4) {
+                              if (value.length == 6) {
                                 _verifyOtp();
                               }
                             },
@@ -317,13 +330,13 @@ class _LoginPageState extends State<LoginPage> {
                                             _sendOtp();
                                           }
                                         } else {
-                                          if (_otpController.text.length == 4) {
+                                          if (_otpController.text.length == 6) {
                                             _verifyOtp();
                                           }
                                         }
                                       },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFffd700),
+                                  backgroundColor: const Color(0xFFf5c034),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),

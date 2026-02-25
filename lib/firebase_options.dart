@@ -41,48 +41,54 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyD3tFVBUP57DDtDdarlJCju6Un02SdtbPA',
-    appId: '1:900652632563:web:b6253cd4187f131f1f6a86',
-    messagingSenderId: '900652632563',
-    projectId: 'ridezzy-vvj1mf',
-    authDomain: 'ridezzy-vvj1mf.firebaseapp.com',
-    storageBucket: 'ridezzy-vvj1mf.firebasestorage.app',
+    apiKey: 'AIzaSyCSuSiylAIdq8sjOBjV0onVT7NhbgwXAEM',
+    appId: '1:335767963568:web:2ef67caae916100b517875',
+    messagingSenderId: '335767963568',
+    projectId: 'maxryd-2026',
+    authDomain: 'maxryd-2026.firebaseapp.com',
+    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'maxryd-2026.firebasestorage.app',
+    measurementId: 'G-FNBHVG61LZ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC4s39Kjcfl59nSqCZr6vEEwao5Mrd9mUY',
-    appId: '1:900652632563:android:59d7b77320b42dd01f6a86',
-    messagingSenderId: '900652632563',
-    projectId: 'ridezzy-vvj1mf',
-    storageBucket: 'ridezzy-vvj1mf.firebasestorage.app',
+    apiKey: 'AIzaSyB6q1NImvNF9kmAFbcp9dT52x_6MpW1Yus',
+    appId: '1:335767963568:android:2787fb892fb7c228517875',
+    messagingSenderId: '335767963568',
+    projectId: 'maxryd-2026',
+    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'maxryd-2026.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBnz42x9b_5VBDVipJn6R0dGDTXr8mX-yY',
-    appId: '1:900652632563:ios:bfa45cd4acc3a95e1f6a86',
-    messagingSenderId: '900652632563',
-    projectId: 'ridezzy-vvj1mf',
-    storageBucket: 'ridezzy-vvj1mf.firebasestorage.app',
-    androidClientId: '900652632563-2mo9dsmq997m5vqrd9m9umss9kspfbh1.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBNIseNLxi1WMprYlm8uQvrsR-yxiNNABA',
+    appId: '1:335767963568:ios:b29c4791557f3762517875',
+    messagingSenderId: '335767963568',
+    projectId: 'maxryd-2026',
+    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'maxryd-2026.firebasestorage.app',
     iosBundleId: 'com.example.ridezzyApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBnz42x9b_5VBDVipJn6R0dGDTXr8mX-yY',
-    appId: '1:900652632563:ios:bfa45cd4acc3a95e1f6a86',
-    messagingSenderId: '900652632563',
-    projectId: 'ridezzy-vvj1mf',
-    storageBucket: 'ridezzy-vvj1mf.firebasestorage.app',
-    androidClientId: '900652632563-2mo9dsmq997m5vqrd9m9umss9kspfbh1.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBNIseNLxi1WMprYlm8uQvrsR-yxiNNABA',
+    appId: '1:335767963568:ios:b29c4791557f3762517875',
+    messagingSenderId: '335767963568',
+    projectId: 'maxryd-2026',
+    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'maxryd-2026.firebasestorage.app',
     iosBundleId: 'com.example.ridezzyApp',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyD3tFVBUP57DDtDdarlJCju6Un02SdtbPA',
-    appId: '1:900652632563:web:cdeac071a98464f71f6a86',
-    messagingSenderId: '900652632563',
-    projectId: 'ridezzy-vvj1mf',
-    authDomain: 'ridezzy-vvj1mf.firebaseapp.com',
-    storageBucket: 'ridezzy-vvj1mf.firebasestorage.app',
+    apiKey: 'AIzaSyCSuSiylAIdq8sjOBjV0onVT7NhbgwXAEM',
+    appId: '1:335767963568:web:d0501a51a28978ce517875',
+    messagingSenderId: '335767963568',
+    projectId: 'maxryd-2026',
+    authDomain: 'maxryd-2026.firebaseapp.com',
+    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'maxryd-2026.firebasestorage.app',
+    measurementId: 'G-LBN8VHD9BV',
   );
+
 }
