@@ -1,12 +1,20 @@
+import 'package:Maxryd_app/features/onboarding/presentation/pages/aadhar_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/agreement_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/bank_details_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/pan_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/profile_awaiting_screen.dart';
+// import 'package:Maxryd_app/features/onboarding/presentation/pages/profile_awaiting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/pages/aadhar_screen.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/pages/agreement_screen.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/pages/bank_details_screen.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/pages/pan_screen.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/pages/profile_awaiting_screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/onboarding_bloc.dart';
+import 'package:Maxryd_app/features/driver/domain/usecases/fetch_driver_profile.dart';
+import 'package:Maxryd_app/features/driver/data/datasources/driver_remote_datasource.dart';
+import 'package:Maxryd_app/features/driver/data/repositories/driver_repository_impl.dart';
+import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
 import 'personal_details_screen.dart';
+// import 'profile_awaiting_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -16,167 +24,202 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => OnboardingBloc(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text(
-            "Onboarding Steps",
-            style: TextStyle(color: Colors.black),
-          ),
-          backgroundColor: const Color(0xFFffd700),
-          iconTheme: const IconThemeData(color: Colors.black),
-          centerTitle: true,
-          elevation: 0,
-        ),
-        body: BlocConsumer<OnboardingBloc, OnboardingState>(
-          listener: (context, state) {
-            if (state is OnboardingFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.error)),
-              );
-            }
-          },
-          buildWhen: (previous, current) =>
-              previous.steps != current.steps ||
-              previous.isSubmitting != current.isSubmitting,
-          builder: (context, state) {
-            final bloc = context.read<OnboardingBloc>();
-            final steps = state.steps.isNotEmpty
-                ? state.steps
-                : [
-                    StepStatus(step: OnboardingStep.personalInfo),
-                    StepStatus(step: OnboardingStep.aadhaar),
-                    StepStatus(step: OnboardingStep.pan),
-                    StepStatus(step: OnboardingStep.bank),
-                    StepStatus(step: OnboardingStep.agreement),
-                  ];
-            final allStepsHaveData = steps.every((step) => step.hasData);
+  DriverProfile? driverProfile;
+  bool isLoading = true;
+  String? token;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _fetchDriverProfile();
+  // }
 
-            return Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(15),
-                    children: [
-                      _buildStepTile(
-                        context,
-                        step: OnboardingStep.personalInfo,
-                        title: "Personal Information",
-                        onTap: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: bloc,
-                                child: const PersonalDetailsScreen(),
-                              ),
-                            ),
-                          );
-                        },
-                        hasData: steps
-                            .firstWhere(
-                              (s) => s.step == OnboardingStep.personalInfo,
-                              orElse: () => StepStatus(
-                                  step: OnboardingStep.personalInfo,
-                                  hasData: false),
-                            )
-                            .hasData,
-                      ),
-                      const SizedBox(height: 15),
-                      _buildStepTile(
-                        context,
-                        step: OnboardingStep.aadhaar,
-                        title: "Aadhaar Card",
-                        onTap: () =>
-                            _navigateToScreen(context, OnboardingStep.aadhaar),
-                        hasData: steps
-                            .firstWhere(
-                              (s) => s.step == OnboardingStep.aadhaar,
-                              orElse: () => StepStatus(
-                                  step: OnboardingStep.aadhaar, hasData: false),
-                            )
-                            .hasData,
-                      ),
-                      const SizedBox(height: 15),
-                      _buildStepTile(
-                        context,
-                        step: OnboardingStep.pan,
-                        title: "PAN Card",
-                        onTap: () =>
-                            _navigateToScreen(context, OnboardingStep.pan),
-                        hasData: steps
-                            .firstWhere(
-                              (s) => s.step == OnboardingStep.pan,
-                              orElse: () => StepStatus(
-                                  step: OnboardingStep.pan, hasData: false),
-                            )
-                            .hasData,
-                      ),
-                      const SizedBox(height: 15),
-                      _buildStepTile(
-                        context,
-                        step: OnboardingStep.bank,
-                        title: "Bank Details",
-                        onTap: () =>
-                            _navigateToScreen(context, OnboardingStep.bank),
-                        hasData: steps
-                            .firstWhere(
-                              (s) => s.step == OnboardingStep.bank,
-                              orElse: () => StepStatus(
-                                  step: OnboardingStep.bank, hasData: false),
-                            )
-                            .hasData,
-                      ),
-                      const SizedBox(height: 15),
-                      _buildStepTile(
-                        context,
-                        step: OnboardingStep.agreement,
-                        title: "User Agreement",
-                        onTap: () => _navigateToScreen(
-                            context, OnboardingStep.agreement),
-                        hasData: steps
-                            .firstWhere(
-                              (s) => s.step == OnboardingStep.agreement,
-                              orElse: () => StepStatus(
-                                  step: OnboardingStep.agreement,
-                                  hasData: false),
-                            )
-                            .hasData,
-                      ),
-                    ],
-                  ),
-                ),
-                // if (allStepsHaveData && !state.isSubmitting)
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      print("All steps completed, proceed to Hub Selection");
-                      // Add navigation logic here
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) =>
-                                const ProfileAwaitingApprovalScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFffd700),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      minimumSize: const Size(double.infinity, 50),
-                    ),
-                    child: const Text("Continue",
-                        style: TextStyle(color: Colors.black, fontSize: 16)),
-                  ),
-                ),
-              ],
-            );
-          },
+  // Future<void> _fetchDriverProfile() async {
+  //   // TODO: Replace with actual token retrieval logic
+  @override
+  void initState() {
+    super.initState();
+    _loadTokenAndFetchProfile();
+  }
+
+  Future<void> _loadTokenAndFetchProfile() async {
+    const storage = FlutterSecureStorage();
+    token = await storage.read(key: 'auth_token');
+    if (token == null) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+    final remote = DriverRemoteDataSourceImpl();
+    final repo = DriverRepositoryImpl(remoteDataSource: remote);
+    final usecase = FetchDriverProfile(repo);
+    final result = await usecase(token!);
+    result.fold(
+      (failure) => setState(() {
+        isLoading = false;
+        driverProfile = null;
+      }),
+      (profile) => setState(() {
+        // SAVE REAL DRIVER ID HERE
+        const storage = FlutterSecureStorage();
+        storage.write(key: 'driverId', value: profile.id);
+        driverProfile = profile;
+        isLoading = false;
+      }),
+    );
+  }
+
+  Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+    final profile = driverProfile;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text(
+          "Onboarding Steps",
+          style: TextStyle(color: Colors.black),
         ),
+        backgroundColor: const Color(0xFFf5c034),
+        iconTheme: const IconThemeData(color: Colors.black),
+        centerTitle: true,
+        elevation: 0,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(15),
+              children: [
+                _buildStepTile(
+                  context,
+                  step: OnboardingStep.personalInfo,
+                  title: "Personal Information",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: context.read<OnboardingBloc>(),
+                          child: const PersonalDetailsScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                  hasData: profile?.personalInfoCompleted ?? false,
+                ),
+                const SizedBox(height: 15),
+                _buildStepTile(
+                  context,
+                  step: OnboardingStep.aadhaar,
+                  title: "Aadhaar Card",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: context.read<OnboardingBloc>(),
+                          child: const AadharVerificationScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                  hasData: profile?.aadhaarInfoCompleted ?? false,
+                ),
+                const SizedBox(height: 15),
+                _buildStepTile(
+                  context,
+                  step: OnboardingStep.pan,
+                  title: "PAN Card",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: context.read<OnboardingBloc>(),
+                          child: const PanVerificationScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                  hasData: profile?.panInfoCompleted ?? false,
+                ),
+                const SizedBox(height: 15),
+                _buildStepTile(
+                  context,
+                  step: OnboardingStep.bank,
+                  title: "Bank Details",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: context.read<OnboardingBloc>(),
+                          child: const BankDetailsScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                  hasData: profile?.bankInfoCompleted ?? false,
+                ),
+                const SizedBox(height: 15),
+                _buildStepTile(
+                  context,
+                  step: OnboardingStep.agreement,
+                  title: "User Agreement",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: context.read<OnboardingBloc>(),
+                          child: const UserAgreementScreen(),
+                        ),
+                      ),
+                    );
+                  },
+                  hasData: profile?.userAgreement ?? false,
+                ),
+                const SizedBox(height: 40),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            child: SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFf5c034),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ProfileAwaitingApprovalScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Continue",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 40),
+        ],
       ),
     );
   }
@@ -212,7 +255,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 onPressed: onTap,
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.black,
-                  backgroundColor: const Color(0xFFffd700),
+                  backgroundColor: const Color(0xFFf5c034),
                 ),
                 child: const Text("Start Now"),
               ),
@@ -232,58 +275,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         return Icons.account_balance_outlined;
       case OnboardingStep.agreement:
         return Icons.description_outlined;
-    }
-  }
-
-  void _navigateToScreen(BuildContext context, OnboardingStep step) {
-    final bloc = context.read<OnboardingBloc>();
-    switch (step) {
-      case OnboardingStep.aadhaar:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-              value: bloc,
-              child: const AadharVerificationScreen(),
-            ),
-          ),
-        );
-        break;
-      case OnboardingStep.pan:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-              value: bloc,
-              child: const PanVerificationScreen(),
-            ),
-          ),
-        );
-        break;
-      case OnboardingStep.bank:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-              value: bloc,
-              child: const BankDetailsScreen(),
-            ),
-          ),
-        );
-        break;
-      case OnboardingStep.agreement:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider.value(
-              value: bloc,
-              child: const UserAgreementScreen(),
-            ),
-          ),
-        );
-        break;
-      default:
-        break;
     }
   }
 }

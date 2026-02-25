@@ -1,5 +1,6 @@
+import 'package:Maxryd_app/features/onboarding/presentation/pages/plan_selection_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/pages/plan_selection_screen.dart';
+
 
 class HubSelectionScreen extends StatefulWidget {
   const HubSelectionScreen({super.key});
@@ -22,7 +23,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFffd700),
+        backgroundColor: const Color(0xFFf5c034),
         centerTitle: true,
         title: const Text(
           "Select Your Hub",
@@ -77,7 +78,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
                         borderRadius: BorderRadius.circular(16),
                         side: BorderSide(
                           color: isSelected
-                              ? const Color(0xFFffd700)
+                              ? const Color(0xFFf5c034)
                               : const Color.fromARGB(255, 232, 230, 230),
                           width: 1,
                         ),
@@ -91,7 +92,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
                               Icons.location_on_outlined,
                               size: 24,
                               color: isSelected
-                                  ? const Color(0xFFffd700)
+                                  ? const Color(0xFFf5c034)
                                   : const Color.fromARGB(255, 232, 230, 230),
                             ),
                             const SizedBox(width: 12),
@@ -123,7 +124,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
                             ),
                             if (isSelected)
                               const Icon(Icons.check_circle,
-                                  color: Color(0xFFffd700)),
+                                  color: Color(0xFFf5c034)),
                           ],
                         ),
                       ),
@@ -182,6 +183,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 60),
           ],
         ),
       ),

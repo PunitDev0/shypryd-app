@@ -1,10 +1,10 @@
+import 'package:Maxryd_app/features/auth/domain/usescases/login_with_phone.dart';
+import 'package:Maxryd_app/features/auth/domain/usescases/verify_otp.dart';
+import 'package:Maxryd_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:ridezzy_app/features/auth/domain/usescases/login_with_phone.dart';
-import 'package:ridezzy_app/features/auth/domain/usescases/verify_otp.dart';
-import 'package:ridezzy_app/firebase_options.dart';
 import 'core/injection_container.dart' as di;
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/auth/presentation/pages/login_page.dart';

@@ -1,18 +1,17 @@
+import 'package:Maxryd_app/features/auth/data/models/auth_response.dart';
 import 'package:dartz/dartz.dart';
-import 'package:ridezzy_app/features/auth/domain/usescases/phone_otp_params.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecase.dart';
-import '../entities/user.dart';
 import '../repositories/auth_repository.dart';
+import 'phone_otp_params.dart';
 
-
-class VerifyOtp implements UseCase<User, PhoneOtpParams> {
+class VerifyOtp implements UseCase<AuthResponse, PhoneOtpParams> {
   final AuthRepository repository;
 
   VerifyOtp(this.repository);
 
   @override
-  Future<Either<Failure, User>> call(PhoneOtpParams params) async {
+  Future<Either<Failure, AuthResponse>> call(PhoneOtpParams params) async {
     return await repository.verifyOtp(params);
   }
 }

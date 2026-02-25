@@ -1,6 +1,6 @@
+import 'package:Maxryd_app/features/auth/domain/usescases/login_with_phone.dart';
+import 'package:Maxryd_app/features/auth/domain/usescases/verify_otp.dart';
 import 'package:get_it/get_it.dart';
-import 'package:ridezzy_app/features/auth/domain/usescases/login_with_phone.dart';
-import 'package:ridezzy_app/features/auth/domain/usescases/verify_otp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../features/auth/data/datasources/auth_local_datasource.dart';
 import '../features/auth/data/datasources/auth_remote_datasource.dart';

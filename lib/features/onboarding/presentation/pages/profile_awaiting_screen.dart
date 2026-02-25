@@ -1,5 +1,7 @@
+import 'package:Maxryd_app/features/onboarding/presentation/pages/hub_selection_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/plan_selection_screen.dart';
+import 'package:Maxryd_app/features/wallet/presentation/pages/my_subscription_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/pages/hub_selection_screen.dart';
 
 class ProfileAwaitingApprovalScreen extends StatelessWidget {
   const ProfileAwaitingApprovalScreen({super.key});
@@ -9,7 +11,7 @@ class ProfileAwaitingApprovalScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFffd700),
+        backgroundColor: const Color(0xFFf5c034),
         centerTitle: true,
         title: const Text(
           "Profile Status",
@@ -30,7 +32,7 @@ class ProfileAwaitingApprovalScreen extends StatelessWidget {
                 const Icon(
                   Icons.hourglass_bottom_rounded,
                   size: 100,
-                  color: Color(0xFFffd700),
+                  color: Color(0xFFf5c034),
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -54,7 +56,7 @@ class ProfileAwaitingApprovalScreen extends StatelessWidget {
                 const SizedBox(height: 30),
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFffd700),
+                    color: const Color(0xFFf5c034),
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
@@ -78,16 +80,17 @@ class ProfileAwaitingApprovalScreen extends StatelessWidget {
                     ),
                     onPressed: () {
                       // TODO: Replace with your Firestore approval status check
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              "Checking approval status...Done on Next screen"),
-                        ),
-                      );
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   const SnackBar(
+                      //     content: Text(
+                      //         "Checking approval status...Done on Next screen"),
+                      //   ),
+                      // );
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const HubSelectionScreen()),
+                          builder: (_) => const MySubscriptionScreen(),
+                        ),
                       );
                     },
                     child: const Text(

@@ -1,4 +1,4 @@
-import 'package:ridezzy_app/features/auth/data/models/user_models.dart';
+import 'package:Maxryd_app/features/auth/data/models/user_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/user.dart';
 import 'dart:convert'; // For jsonDecode

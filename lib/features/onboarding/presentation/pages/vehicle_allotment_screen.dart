@@ -1,6 +1,6 @@
+import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ridezzy_app/features/home/presentation/pages/home_page.dart';
 
 class VehicleAllotmentScreen extends StatefulWidget {
   const VehicleAllotmentScreen({super.key});
@@ -76,7 +76,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const yellow = Color(0xFFFFD700);
+    const yellow = Color(0xFFf5c034);
     const lightGray = Color(0xFFE8E6E6);
 
     return Scaffold(
@@ -221,7 +221,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                           setState(() => checklist[item] = v ?? false);
                         },
                         shape: const CircleBorder(),
-                        activeColor: const Color(0xFFFFD700), // yellow fill
+                        activeColor: const Color(0xFFf5c034), // yellow fill
                         checkColor: Colors.white, // white tick
                         side: const BorderSide(
                             color: Color(0xFFE8E6E6), width: 1.5),
@@ -268,7 +268,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                 foregroundColor: Colors.black,
                 side: BorderSide(
                     color: videoWatched
-                        ? const Color(0xFFFFD700)
+                        ? const Color(0xFFf5c034)
                         : const Color.fromARGB(255, 232, 230, 230),
                     width: 1.5),
                 shape: RoundedRectangleBorder(
@@ -303,7 +303,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                             children: [
                               const Icon(
                                 Icons.check_circle,
-                                color: Color(0xFFFFD700),
+                                color: Color(0xFFf5c034),
                                 size: 60,
                               ),
                               const SizedBox(height: 12),
@@ -329,7 +329,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                                 width: 120,
                                 child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFFD700),
+                                    backgroundColor: const Color(0xFFf5c034),
                                     foregroundColor: Colors.black,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
@@ -357,14 +357,15 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                   : null,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 50),
-                backgroundColor: const Color(0xFFFFD700),
+                backgroundColor: const Color(0xFFf5c034),
                 foregroundColor: Colors.black,
               ),
               child: const Text(
                 "Accept Vehicle",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            )
+            ),
+            const SizedBox(height: 60),
           ],
         ),
       ),

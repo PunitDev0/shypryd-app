@@ -1,4 +1,8 @@
-part of 'auth_bloc.dart';
+// part of 'auth_bloc.dart';
+
+import 'package:Maxryd_app/features/auth/data/models/auth_response.dart';
+import 'package:equatable/equatable.dart';
+import 'package:Maxryd_app/features/auth/domain/entities/user.dart'; // ← Add this import
 
 abstract class AuthState extends Equatable {
   const AuthState();
@@ -12,22 +16,30 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class AuthPhoneSent extends AuthState {
-  final User user;
+  final User? user; // Make optional if you don't always need it
 
-  const AuthPhoneSent(this.user);
+  const AuthPhoneSent([this.user]); // Make parameter optional
 
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [user ?? ''];
 }
 
 class AuthAuthenticated extends AuthState {
   final User user;
   final bool isNewUser;
+  final bool? onboardingCompleted;
+  final AuthResponse authResponse;
 
-  const AuthAuthenticated(this.user,{this.isNewUser = false});
+  const AuthAuthenticated(
+    this.user, {
+    this.isNewUser = false,
+    this.onboardingCompleted,
+    required this.authResponse,
+  });
 
   @override
-  List<Object> get props => [user, isNewUser];
+  List<Object> get props =>
+      [user, isNewUser, onboardingCompleted ?? '', authResponse];
 }
 
 class AuthError extends AuthState {
@@ -38,4 +50,3 @@ class AuthError extends AuthState {
   @override
   List<Object> get props => [message];
 }
-

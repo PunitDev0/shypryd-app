@@ -1,5 +1,7 @@
+import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/vehicle_allotment_screen.dart';
+import 'package:Maxryd_app/features/wallet/presentation/pages/payment_method_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:ridezzy_app/features/onboarding/presentation/pages/vehicle_allotment_screen.dart';
 
 class PlanSelectionScreen extends StatefulWidget {
   const PlanSelectionScreen({super.key});
@@ -15,6 +17,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
     required String title,
     required String price,
     required String duration,
+    required int totalPrice,
     required List<String> rules,
   }) {
     final bool isSelected = selectedPlan == title;
@@ -33,7 +36,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: isSelected
-                ? const Color(0xFFffd700)
+                ? const Color(0xFFf5c034)
                 : const Color.fromARGB(255, 232, 230, 230),
             width: 2,
           ),
@@ -66,7 +69,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                       if (isSelected) ...[
                         const SizedBox(width: 8),
                         const Icon(Icons.check_circle,
-                            color: Color(0xFFffd700)),
+                            color: Color(0xFFf5c034)),
                       ]
                     ],
                   ),
@@ -105,7 +108,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFffd700),
+        backgroundColor: const Color(0xFFf5c034),
         centerTitle: true,
         title: const Text(
           "Select Your Plan",
@@ -122,7 +125,8 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
           children: [
             _buildPlanCard(
               title: "Weekly Plan",
-              price: "₹1600/week",
+              price: "₹1599/week",
+              totalPrice: 1699,
               duration: "7 days of service included",
               rules: [
                 "2 swaps/day - 3rd or more swaps ₹65/swap",
@@ -132,7 +136,8 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
             ),
             _buildPlanCard(
               title: "Monthly Plan",
-              price: "₹6800/month",
+              price: "₹5999/month",
+              totalPrice: 6999,
               duration: "30 days of service included",
               rules: [
                 "2 swaps/day - 3rd or more swaps ₹65/swap",
@@ -151,14 +156,32 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const VehicleAllotmentScreen(),
-                          ),
+                              builder: (_) => PaymentMethodScreen(
+                                      selectedPlan: {
+                                        "title": selectedPlan!,
+                                        "price": selectedPlan == "Weekly Plan"
+                                            ? "₹1599/week"
+                                            : "₹5999/month",
+                                        "duration":
+                                            selectedPlan == "Weekly Plan"
+                                                ? "7 days of service included"
+                                                : "30 days of service included",
+                                        "rules": const [
+                                          "2 swaps/day - 3rd or more swaps ₹65/swap",
+                                          "Regular maintenance included",
+                                          "Damage caused by driver will be charged",
+                                        ],
+                                      },
+                                      selectedPickupTime: "10 am - 5pm",
+                                      totalAmount: selectedPlan == "Weekly Plan"
+                                          ? 1699
+                                          : 6999)),
                         );
                       }
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: selectedPlan != null
-                      ? const Color(0xFFffd700)
+                      ? const Color(0xFFf5c034)
                       : Colors.grey[400],
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -166,7 +189,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                   ),
                 ),
                 child: const Text(
-                  "Proceed to Vehicle Allotment",
+                  "Proceed to Payment",
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,

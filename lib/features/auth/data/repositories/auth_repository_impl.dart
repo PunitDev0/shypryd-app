@@ -1,11 +1,10 @@
-import 'dart:convert'; // Add this import for jsonEncode
+import 'dart:convert';
 
+import 'package:Maxryd_app/core/error/exceptions.dart';
+import 'package:Maxryd_app/core/error/failures.dart';
+import 'package:Maxryd_app/features/auth/data/models/auth_response.dart';
+import 'package:Maxryd_app/features/auth/domain/usescases/phone_otp_params.dart';
 import 'package:dartz/dartz.dart';
-import 'package:ridezzy_app/core/error/exceptions.dart';
-import 'package:ridezzy_app/features/auth/data/models/user_models.dart';
-import 'package:ridezzy_app/features/auth/domain/usescases/phone_otp_params.dart';
-import '../../../../core/error/failures.dart';
-import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_local_datasource.dart';
 import '../datasources/auth_remote_datasource.dart';
@@ -20,25 +19,23 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future<Either<Failure, User>> loginWithPhone(String phoneNumber) async {
+  Future<Either<Failure, void>> sendOtp(String phoneNumber) async {
     try {
-      final remoteUser = await remoteDataSource.loginWithPhone(phoneNumber);
-      // Convert to UserModel for serialization
-      final userModel = UserModel(id: remoteUser.id, phone: remoteUser.phone);
-      await localDataSource.cacheUser(jsonEncode(userModel.toJson()));
-      return Right(remoteUser);
+      await remoteDataSource.sendOtp(phoneNumber);
+      return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
   }
 
- @override
-  Future<Either<Failure, User>> verifyOtp(PhoneOtpParams params) async {
+  @override
+  Future<Either<Failure, AuthResponse>> verifyOtp(PhoneOtpParams params) async {
     try {
-      final remoteUser = await remoteDataSource.verifyOtp(params);
-      final userModel = UserModel(id: remoteUser.id, phone: remoteUser.phone);
-      await localDataSource.cacheUser(jsonEncode(userModel.toJson()));
-      return Right(remoteUser);
+      final response = await remoteDataSource.verifyOtp(params);
+      // Cache user part
+      final userJson = jsonEncode(response.user.toJson());
+      await localDataSource.cacheUser(userJson);
+      return Right(response);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } catch (e) {
