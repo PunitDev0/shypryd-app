@@ -24,6 +24,8 @@ class DriverProfileModel extends DriverProfile {
     super.panVerification,
     super.bankDetails,
     super.swapStatus,
+    super.activeSubscription,
+    super.vehicle,
   });
 
   factory DriverProfileModel.fromJson(Map<String, dynamic> json) {
@@ -40,9 +42,9 @@ class DriverProfileModel extends DriverProfile {
       status: json['status'] as String? ?? '',
       userAgreement: json['userAgreement'] as bool? ?? false,
       isOnline: json['isOnline'] as bool? ?? false,
-      rating: json['rating'] as int? ?? 0,
-      totalTrips: json['totalTrips'] as int? ?? 0,
-      walletBalance: json['walletBalance'] as int? ?? 0,
+      rating: (json['rating'] as num?)?.toInt() ?? 0,
+      totalTrips: (json['totalTrips'] as num?)?.toInt() ?? 0,
+      walletBalance: (json['walletBalance'] as num?)?.toInt() ?? 0,
       createdAt: json['createdAt'] as String? ?? '',
       updatedAt: json['updatedAt'] as String? ?? '',
       personalInformation: json['personalInformation'] != null
@@ -58,6 +60,12 @@ class DriverProfileModel extends DriverProfile {
           ? BankDetails.fromJson(json['bankDetails'])
           : null,
       swapStatus: json['swapStatus'] as String?,
+      activeSubscription: json['activeSubscription'] != null
+          ? ActiveSubscription.fromJson(json['activeSubscription'])
+          : null,
+      vehicle: json['vehicle'] != null
+          ? VehicleDetails.fromJson(json['vehicle'])
+          : null,
     );
   }
 }

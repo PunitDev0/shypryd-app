@@ -12,7 +12,7 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  static const String baseUrl = 'https://api.maxryd.com';
+  static const String baseUrl = 'http://192.168.1.43:5008';
 
   @override
   Future<void> sendOtp(String phoneNumber) async {

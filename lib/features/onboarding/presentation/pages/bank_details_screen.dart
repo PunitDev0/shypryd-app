@@ -59,7 +59,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
       return;
     }
     final response = await http.put(
-      Uri.parse('https://api.maxryd.com/api/driver/bank'),
+      Uri.parse('http://192.168.1.43:5008/api/driver/bank'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

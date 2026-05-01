@@ -8,7 +8,7 @@ abstract class DriverRemoteDataSource {
 }
 
 class DriverRemoteDataSourceImpl implements DriverRemoteDataSource {
-  static const String baseUrl = 'https://api.maxryd.com';
+  static const String baseUrl = 'http://192.168.1.43:5008';
 
   @override
   Future<DriverProfileModel> fetchDriverProfile(String token) async {

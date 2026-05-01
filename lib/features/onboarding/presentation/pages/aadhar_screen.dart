@@ -31,7 +31,7 @@ class AadharVerificationScreen extends StatelessWidget {
       return null;
     }
     print('Uploading image: $imagePath');
-    final url = Uri.parse('https://api.maxryd.com/api/upload/image');
+    final url = Uri.parse('http://192.168.1.43:5008/api/upload/image');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $token';
     final file = File(imagePath);
@@ -96,7 +96,7 @@ class AadharVerificationScreen extends StatelessWidget {
       "aadhaarFrontImage": frontImageUrl,
       "aadhaarBackImage": backImageUrl,
     };
-    final url = Uri.parse('https://api.maxryd.com/api/driver/aadhaar');
+    final url = Uri.parse('http://192.168.1.43:5008/api/driver/aadhaar');
     final response = await http.put(
       url,
       headers: {

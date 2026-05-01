@@ -14,6 +14,9 @@ import 'package:Maxryd_app/features/driver/data/datasources/driver_remote_dataso
 import 'package:Maxryd_app/features/driver/data/repositories/driver_repository_impl.dart';
 import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
 import 'personal_details_screen.dart';
+import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 // import 'profile_awaiting_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -107,7 +110,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: const PersonalDetailsScreen(),
                         ),
                       ),
-                    );
+                    ).then((_) => _loadTokenAndFetchProfile());
                   },
                   hasData: profile?.personalInfoCompleted ?? false,
                 ),
@@ -125,7 +128,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: const AadharVerificationScreen(),
                         ),
                       ),
-                    );
+                    ).then((_) => _loadTokenAndFetchProfile());
                   },
                   hasData: profile?.aadhaarInfoCompleted ?? false,
                 ),
@@ -143,7 +146,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: const PanVerificationScreen(),
                         ),
                       ),
-                    );
+                    ).then((_) => _loadTokenAndFetchProfile());
                   },
                   hasData: profile?.panInfoCompleted ?? false,
                 ),
@@ -161,7 +164,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: const BankDetailsScreen(),
                         ),
                       ),
-                    );
+                    ).then((_) => _loadTokenAndFetchProfile());
                   },
                   hasData: profile?.bankInfoCompleted ?? false,
                 ),
@@ -179,7 +182,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           child: const UserAgreementScreen(),
                         ),
                       ),
-                    );
+                    ).then((_) => _loadTokenAndFetchProfile());
                   },
                   hasData: profile?.userAgreement ?? false,
                 ),
@@ -199,17 +202,135 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ProfileAwaitingApprovalScreen(),
-                    ),
-                  );
+                onPressed: () async {
+                  if (profile?.personalInfoCompleted == true &&
+                      profile?.aadhaarInfoCompleted == true &&
+                      profile?.panInfoCompleted == true &&
+                      profile?.bankInfoCompleted == true &&
+                      profile?.userAgreement == true) {
+                    // All steps completed, call complete-profile and go to home
+                    const storage = FlutterSecureStorage();
+                    final token = await storage.read(key: 'auth_token');
+                    if (token == null) return;
+
+                    // Show loading
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) =>
+                          const Center(child: CircularProgressIndicator()),
+                    );
+
+                    try {
+                      final response = await http.post(
+                        Uri.parse(
+                            'http://192.168.1.43:5008/api/driver/complete-profile'),
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Accept': 'application/json',
+                          'Authorization': 'Bearer $token',
+                        },
+                        body: jsonEncode({
+                          "phone": profile?.phone ?? "",
+                          "userAgreement": true,
+                          "personalInformation": {
+                            "fullName": profile?.personalInformation?.fullName,
+                            "gender": profile?.personalInformation?.gender,
+                            "serviceRegion":
+                                profile?.personalInformation?.serviceRegion,
+                            "currentFullAddress":
+                                profile?.personalInformation?.currentFullAddress,
+                            "zone": profile?.personalInformation?.zone,
+                            "emergencyReference1": {
+                              "referenceName": profile?.personalInformation
+                                  ?.emergencyReference1?.referenceName,
+                              "referenceRelation": profile?.personalInformation
+                                  ?.emergencyReference1?.referenceRelation,
+                              "referencePhoneNumber": profile
+                                  ?.personalInformation
+                                  ?.emergencyReference1
+                                  ?.referencePhoneNumber,
+                            },
+                            "emergencyReference2": {
+                              "referenceName": profile?.personalInformation
+                                  ?.emergencyReference2?.referenceName,
+                              "referenceRelation": profile?.personalInformation
+                                  ?.emergencyReference2?.referenceRelation,
+                              "referencePhoneNumber": profile
+                                  ?.personalInformation
+                                  ?.emergencyReference2
+                                  ?.referencePhoneNumber,
+                            },
+                          },
+                          "aadhaarVerification": {
+                            "aadhaarNumber":
+                                profile?.aadhaarVerification?.aadhaarNumber,
+                            "aadhaarFrontImage":
+                                profile?.aadhaarVerification?.aadhaarFrontImage,
+                            "aadhaarBackImage":
+                                profile?.aadhaarVerification?.aadhaarBackImage,
+                          },
+                          "panVerification": {
+                            "panNumber": profile?.panVerification?.panNumber,
+                            "dateOfBirth":
+                                profile?.panVerification?.dateOfBirth,
+                            "panCardImage":
+                                profile?.panVerification?.panCardImage,
+                          },
+                          "bankDetails": {
+                            "bankName": profile?.bankDetails?.bankName,
+                            "accountNumber":
+                                profile?.bankDetails?.accountNumber,
+                            "confirmAccountNumber":
+                                profile?.bankDetails?.confirmAccountNumber,
+                            "ifscCode": profile?.bankDetails?.ifscCode,
+                          },
+                          "status":
+                              "approved" // Auto-approve for now as requested
+                        }),
+                      );
+
+                      Navigator.pop(context); // Remove loading
+
+                      if (response.statusCode == 200 ||
+                          response.statusCode == 201) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HomeScreen()),
+                          (route) => false,
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Failed to complete profile: ${response.statusCode}')),
+                        );
+                      }
+                    } catch (e) {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: $e')),
+                      );
+                    }
+                  } else {
+                    // Not all steps completed, show status
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ProfileAwaitingApprovalScreen(),
+                      ),
+                    );
+                  }
                 },
-                child: const Text(
-                  "Continue",
-                  style: TextStyle(
+                child: Text(
+                  (profile?.personalInfoCompleted == true &&
+                          profile?.aadhaarInfoCompleted == true &&
+                          profile?.panInfoCompleted == true &&
+                          profile?.bankInfoCompleted == true &&
+                          profile?.userAgreement == true)
+                      ? "Complete"
+                      : "Continue",
+                  style: const TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,

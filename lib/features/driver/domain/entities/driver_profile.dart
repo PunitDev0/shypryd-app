@@ -30,6 +30,8 @@ class DriverProfile extends Equatable {
 
   // Extra field from API response
   final String? swapStatus;
+  final ActiveSubscription? activeSubscription;
+  final VehicleDetails? vehicle;
 
   const DriverProfile({
     required this.id,
@@ -54,6 +56,8 @@ class DriverProfile extends Equatable {
     this.panVerification,
     this.bankDetails,
     this.swapStatus,
+    this.activeSubscription,
+    this.vehicle,
   });
 
   @override
@@ -80,6 +84,8 @@ class DriverProfile extends Equatable {
         panVerification,
         bankDetails,
         swapStatus,
+        activeSubscription,
+        vehicle,
       ];
 }
 
@@ -118,7 +124,7 @@ class PersonalInformation extends Equatable {
       emergencyReference2: json['emergencyReference2'] != null
           ? EmergencyReference.fromJson(json['emergencyReference2'])
           : null,
-      zone: json['zone'] as String?,
+      zone: json['zone'] is Map ? json['zone']['name'] as String? : json['zone'] as String?,
     );
   }
 
@@ -230,4 +236,67 @@ class BankDetails extends Equatable {
   @override
   List<Object?> get props =>
       [bankName, accountNumber, confirmAccountNumber, ifscCode];
+}
+
+class ActiveSubscription extends Equatable {
+  final String? id;
+  final String? plan;
+  final String? startDate;
+  final String? endDate;
+  final int? totalAmount;
+  final String? status;
+
+  const ActiveSubscription({
+    this.id,
+    this.plan,
+    this.startDate,
+    this.endDate,
+    this.totalAmount,
+    this.status,
+  });
+
+  factory ActiveSubscription.fromJson(Map<String, dynamic> json) {
+    return ActiveSubscription(
+      id: json['_id'] as String?,
+      plan: json['plan'] as String?,
+      startDate: json['startDate'] as String?,
+      endDate: json['endDate'] as String?,
+      totalAmount: json['totalAmount'] is int
+          ? json['totalAmount'] as int
+          : (json['totalAmount'] as num?)?.toInt(),
+      status: json['status'] as String?,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, plan, startDate, endDate, totalAmount, status];
+}
+
+class VehicleDetails extends Equatable {
+  final String? id;
+  final String? vehicleId;
+  final String? chassisNo;
+  final String? status;
+  final String? type;
+
+  const VehicleDetails({
+    this.id,
+    this.vehicleId,
+    this.chassisNo,
+    this.status,
+    this.type,
+  });
+
+  factory VehicleDetails.fromJson(Map<String, dynamic> json) {
+    return VehicleDetails(
+      id: json['_id'] as String?,
+      vehicleId: json['vehicleId'] as String?,
+      chassisNo: json['chassisNo'] as String?,
+      status: json['status'] as String?,
+      type: json['type'] as String?,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, vehicleId, chassisNo, status, type];
 }

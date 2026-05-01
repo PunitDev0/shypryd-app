@@ -43,7 +43,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
         throw Exception('No auth token found. Please login again.');
       }
 
-      final url = Uri.parse('https://api.maxryd.com/api/subscription/plans');
+      final url = Uri.parse('http://192.168.1.43:5008/api/subscription/plans');
       print('API URL: $url');
 
       final response = await http.get(

@@ -130,7 +130,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           : 'monthly';
 
       final url =
-          Uri.parse('https://api.maxryd.com/api/subscription/create-order');
+          Uri.parse('http://192.168.1.43:5008/api/subscription/create-order');
       final body = {'driverId': driverId, 'plan': plan};
 
       final response = await http.post(
@@ -190,7 +190,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
       if (token == null) throw Exception('No auth token');
 
       final url =
-          Uri.parse('https://api.maxryd.com/api/subscription/verify-payment');
+          Uri.parse('http://192.168.1.43:5008/api/subscription/verify-payment');
 
       final body = {
         'subscriptionId': subscriptionId,

@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
     as onboarding;
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
 
 class UserAgreementScreen extends StatefulWidget {
   const UserAgreementScreen({super.key});
@@ -168,12 +171,43 @@ By clicking “I Agree”, you confirm that you have read, understood, and accep
                       child: ElevatedButton(
                         onPressed: _isAgreed && _isScrolledToEnd
                             ? () async {
-                                context.read<onboarding.OnboardingBloc>().add(
-                                    onboardingEvent.DataEntered(
-                                        onboarding.OnboardingStep.agreement));
-                                await Future.delayed(
-                                    const Duration(milliseconds: 100));
-                                Navigator.pop(context);
+                                const storage = FlutterSecureStorage();
+                                final token = await storage.read(key: 'auth_token');
+                                if (token == null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Auth token not found. Please login again.')),
+                                  );
+                                  return;
+                                }
+
+                                final response = await http.put(
+                                  Uri.parse(
+                                      'http://192.168.1.43:5008/api/driver/agreement'),
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'Authorization': 'Bearer $token',
+                                  },
+                                  body: jsonEncode({"userAgreement": true}),
+                                );
+
+                                if (response.statusCode == 200 ||
+                                    response.statusCode == 201) {
+                                  context.read<onboarding.OnboardingBloc>().add(
+                                      onboardingEvent.DataEntered(
+                                          onboarding.OnboardingStep.agreement));
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 100));
+                                  Navigator.pop(context);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Failed to update agreement: ${response.statusCode}')),
+                                  );
+                                }
                               }
                             : null,
                         style: ElevatedButton.styleFrom(

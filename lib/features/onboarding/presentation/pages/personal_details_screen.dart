@@ -69,7 +69,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
         }
       }
     };
-    final url = Uri.parse('https://api.maxryd.com/api/driver/personal-info');
+    final url = Uri.parse('http://192.168.1.43:5008/api/driver/personal-info');
     final response = await http.put(
       url,
       headers: {

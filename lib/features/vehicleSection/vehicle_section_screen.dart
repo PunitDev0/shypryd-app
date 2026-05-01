@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
 
 class VehicleSectionScreen extends StatelessWidget {
-  const VehicleSectionScreen({super.key});
+  final DriverProfile? driverProfile;
+  const VehicleSectionScreen({super.key, this.driverProfile});
 
   static const yellow = Color(0xFFFFD600);
-  static const errorRed = Color(0xFFFF3B30);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
+    final vehicle = driverProfile?.vehicle;
 
-      /// APP BAR
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FB),
       appBar: AppBar(
         backgroundColor: yellow,
         elevation: 0,
@@ -19,117 +20,219 @@ class VehicleSectionScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        titleSpacing: 0,
-        title: const Row(
-          children: [
-            Icon(Icons.electric_scooter, color: Colors.black),
-            SizedBox(width: 8),
-            Text(
-              'Scooter Health',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+        title: const Text(
+          'My Vehicle',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.black),
-            onPressed: () {
-              // TODO: refresh scooter health API
-            },
-          ),
-          const Padding(
-            padding: EdgeInsets.only(right: 8),
-            child: CircleAvatar(
-              backgroundColor: errorRed,
-              child: Icon(
-                Icons.wifi_off,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
+            onPressed: () {},
           ),
         ],
       ),
-
-      /// BODY
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              /// ERROR ICON
-              Container(
-                height: 80,
-                width: 80,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Vehicle ID Card
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 30),
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: errorRed, width: 3),
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(24),
                 ),
-                child: const Center(
-                  child: Icon(
-                    Icons.priority_high,
-                    color: errorRed,
-                    size: 40,
-                  ),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: const BoxDecoration(
+                        color: yellow,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.electric_scooter, color: Colors.black, size: 32),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      vehicle?.vehicleId ?? "NOT ASSIGNED",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "VEHICLE ID",
+                      style: TextStyle(
+                        color: Colors.white54,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+            ),
 
-              const SizedBox(height: 24),
+            // Specifications Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.grey.shade200),
+                ),
+                child: Column(
+                  children: [
+                    _SpecRow(
+                      icon: Icons.confirmation_number_outlined,
+                      label: "Chassis Number",
+                      value: vehicle?.chassisNo ?? "---",
+                    ),
+                    const Divider(height: 30),
+                    _SpecRow(
+                      icon: Icons.category_outlined,
+                      label: "Vehicle Type",
+                      value: vehicle?.type ?? "---",
+                    ),
+                    const Divider(height: 30),
+                    _SpecRow(
+                      icon: Icons.info_outline,
+                      label: "Status",
+                      value: vehicle?.status?.toUpperCase() ?? "---",
+                      valueColor: vehicle?.status == "assigned" ? Colors.green : Colors.orange,
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
-              /// TITLE
-              const Text(
-                'Connection Error',
+            const SizedBox(height: 30),
+
+            // Quick Actions
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  _ActionItem(
+                    title: "Report Maintenance",
+                    icon: Icons.build_circle_outlined,
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 12),
+                  _ActionItem(
+                    title: "Service History",
+                    icon: Icons.history,
+                    onTap: () {},
+                  ),
+                  const SizedBox(height: 12),
+                  _ActionItem(
+                    title: "Request Vehicle Return",
+                    icon: Icons.assignment_return_outlined,
+                    textColor: Colors.red,
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SpecRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color? valueColor;
+
+  const _SpecRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.valueColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, color: Colors.grey[400], size: 22),
+        const SizedBox(width: 15),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+              const SizedBox(height: 2),
+              Text(
+                value,
                 style: TextStyle(
-                  fontSize: 22,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              /// SUBTITLE
-              const Text(
-                'FAIL',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey,
-                  letterSpacing: 1.2,
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              /// RETRY BUTTON
-              SizedBox(
-                width: 220,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: retry API call
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: yellow,
-                    foregroundColor: Colors.black,
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                  ),
-                  child: const Text(
-                    'Retry Connection',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  color: valueColor ?? Colors.black87,
                 ),
               ),
             ],
           ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ActionItem extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+  final Color? textColor;
+
+  const _ActionItem({
+    required this.title,
+    required this.icon,
+    required this.onTap,
+    this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade100),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: textColor ?? Colors.black, size: 22),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: textColor ?? Colors.black87,
+                ),
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey[300]),
+          ],
         ),
       ),
     );

@@ -497,7 +497,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
         throw Exception('No auth token found. Please login again.');
       }
 
-      final uri = Uri.parse('https://api.maxryd.com/api/ticket/raise');
+      final uri = Uri.parse('http://192.168.1.43:5008/api/ticket/raise');
       print('API Endpoint: $uri');
       print('Problem Type: $selectedProblemType');
       print('Description length: ${_descController.text.trim().length} chars');

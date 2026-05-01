@@ -11,37 +11,17 @@ class HelpCenterScreen extends StatelessWidget {
   final String number1 = '7339966643';
   final String number2 = '9220424574';
 
-  // Function to open phone dialer
   Future<void> _callNumber(String number) async {
     final Uri uri = Uri(scheme: 'tel', path: number);
-
-    print('Attempting to dial: $uri'); // for your logs
-
     try {
       if (await canLaunchUrl(uri)) {
-        print('Dialer can be launched → opening');
         await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        print('canLaunchUrl returned false → no dialer found');
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text('Could not open dialer. Please dial $number manually.'),
-        //     duration: const Duration(seconds: 5),
-        //   ),
-        // );
       }
     } catch (e) {
       print('Launch error: $e');
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text('Error opening dialer: $e\nTry dialing $number manually.'),
-      //     duration: const Duration(seconds: 5),
-      //   ),
-      // );
     }
   }
 
-  // Show bottom sheet with helpline numbers
   void _showHelplineBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -69,43 +49,26 @@ class HelpCenterScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Reach out to our support team',
-              style: TextStyle(fontSize: 14, color: Colors.black54),
-            ),
             const SizedBox(height: 24),
-
-            // Number 1
             ListTile(
               leading: const Icon(Icons.phone, color: yellow),
-              title: Text(
-                number1,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              subtitle: const Text('Tap to call'),
+              title: Text(number1,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w600)),
               onTap: () {
                 _callNumber(number1);
-                Navigator.pop(context); // close sheet after tap
+                Navigator.pop(context);
               },
               tileColor: Colors.grey[100],
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             ),
             const SizedBox(height: 12),
-
-            // Number 2
             ListTile(
               leading: const Icon(Icons.phone, color: yellow),
-              title: Text(
-                number2,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-              ),
-              subtitle: const Text('Tap to call'),
+              title: Text(number2,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.w600)),
               onTap: () {
                 _callNumber(number2);
                 Navigator.pop(context);
@@ -113,10 +76,7 @@ class HelpCenterScreen extends StatelessWidget {
               tileColor: Colors.grey[100],
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             ),
-
             const SizedBox(height: 20),
           ],
         ),
@@ -128,88 +88,156 @@ class HelpCenterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: yellow,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Help Center',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 12),
-            const Text(
-              'How can we help you?',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Choose from the options below to get assistance',
-              style: TextStyle(fontSize: 14, color: Colors.black54),
-            ),
-            const SizedBox(height: 24),
-
-            /// GRID OPTIONS
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 18,
-                crossAxisSpacing: 18,
-                childAspectRatio: 0.9,
-                children: [
-                  _HelpTile(
-                    icon: Icons.support_agent,
-                    title: 'Raise Ticket',
-                    subtitle: 'Report an issue or get help',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RaiseTicketScreen()),
-                      );
-                    },
-                  ),
-                  _HelpTile(
-                    icon: Icons.receipt_long,
-                    title: 'My Tickets',
-                    subtitle: 'View your support tickets',
-                    onTap: () {},
-                  ),
-                  _HelpTile(
-                    icon: Icons.call,
-                    title: 'Call Helpline',
-                    subtitle: 'Talk to our support team',
-                    onTap: () => _showHelplineBottomSheet(context), // ← Updated
-                  ),
-                  _HelpTile(
-                    icon: Icons.play_circle_outline,
-                    title: 'Training Videos',
-                    subtitle: 'Watch helpful tutorials',
-                    onTap: () {},
-                  ),
-                  _HelpTile(
-                    icon: Icons.electric_scooter,
-                    title: 'Hub',
-                    subtitle: 'Hub Details',
-                    onTap: () {},
-                  ),
-                ],
+      body: Column(
+        children: [
+          // Yellow Header
+          Stack(
+            children: [
+              Container(
+                height: 220,
+                width: double.infinity,
+                color: yellow,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back_ios, size: 20),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'How can we help\nyou today?',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        height: 1.2,
+                      ),
+                    ),
+                    const Spacer(),
+                    const Center(
+                      child: Text(
+                        'Help Center',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              // Decorative circle
+              Positioned(
+                right: -50,
+                top: -50,
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Search Bar
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: const TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Search for issues...',
+                      border: InputBorder.none,
+                      icon: Icon(Icons.search, color: Colors.grey),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                const Text(
+                  'Support Categories',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+
+          Expanded(
+            child: GridView.count(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              crossAxisCount: 2,
+              mainAxisSpacing: 20,
+              crossAxisSpacing: 20,
+              childAspectRatio: 0.9,
+              children: [
+                _HelpTile(
+                  icon: Icons.support_agent,
+                  iconColor: Colors.blue,
+                  iconBgColor: const Color(0xFFE3F2FD),
+                  title: 'Raise Ticket',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const RaiseTicketScreen()),
+                    );
+                  },
+                ),
+                _HelpTile(
+                  icon: Icons.receipt_long,
+                  iconColor: Colors.purple,
+                  iconBgColor: const Color(0xFFF3E5F5),
+                  title: 'My Tickets',
+                  onTap: () {},
+                ),
+                _HelpTile(
+                  icon: Icons.phone_in_talk,
+                  iconColor: Colors.orange,
+                  iconBgColor: const Color(0xFFFFF3E0),
+                  title: 'Helpline',
+                  onTap: () => _showHelplineBottomSheet(context),
+                ),
+                _HelpTile(
+                  icon: Icons.play_lesson,
+                  iconColor: Colors.green,
+                  iconBgColor: const Color(0xFFE8F5E9),
+                  title: 'Tutorials',
+                  onTap: () {},
+                ),
+                _HelpTile(
+                  icon: Icons.location_on,
+                  iconColor: Colors.red,
+                  iconBgColor: const Color(0xFFFFEBEE),
+                  title: 'Hub Locator',
+                  onTap: () {},
+                ),
+                _HelpTile(
+                  icon: Icons.info,
+                  iconColor: Colors.teal,
+                  iconBgColor: const Color(0xFFE0F2F1),
+                  title: 'About App',
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -217,52 +245,56 @@ class HelpCenterScreen extends StatelessWidget {
 
 class _HelpTile extends StatelessWidget {
   final IconData icon;
+  final Color iconColor;
+  final Color iconBgColor;
   final String title;
-  final String subtitle;
   final VoidCallback onTap;
 
   const _HelpTile({
     required this.icon,
+    required this.iconColor,
+    required this.iconBgColor,
     required this.title,
-    required this.subtitle,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(20),
       onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.grey.shade300),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          border: Border.all(color: Colors.grey.shade100),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              height: 56,
-              width: 56,
+              padding: const EdgeInsets.all(15),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFD600),
-                borderRadius: BorderRadius.circular(16),
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(15),
               ),
-              child: Icon(icon, color: Colors.black, size: 28),
+              child: Icon(icon, color: iconColor, size: 28),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 6),
-            Text(
-              subtitle,
-              style: const TextStyle(fontSize: 13, color: Colors.black54),
-              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
           ],
         ),
