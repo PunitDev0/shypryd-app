@@ -1,6 +1,6 @@
-import 'package:ShipRyd_app/features/onboarding/presentation/pages/hub_selection_screen.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/pages/plan_selection_screen.dart';
-import 'package:ShipRyd_app/features/wallet/presentation/pages/my_subscription_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/hub_selection_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/plan_selection_screen.dart';
+import 'package:Maxryd_app/features/wallet/presentation/pages/my_subscription_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfileAwaitingApprovalScreen extends StatelessWidget {
@@ -9,7 +9,7 @@ class ProfileAwaitingApprovalScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFf5c034),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFFf5c034),
         centerTitle: true,
@@ -49,7 +49,7 @@ class ProfileAwaitingApprovalScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,
-                    color: Colors.black,
+                    color: Colors.black54,
                     height: 1.5,
                   ),
                 ),

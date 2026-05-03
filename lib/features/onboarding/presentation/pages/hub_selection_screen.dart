@@ -1,4 +1,4 @@
-import 'package:ShipRyd_app/features/onboarding/presentation/pages/plan_selection_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/plan_selection_screen.dart';
 import 'package:flutter/material.dart';
 
 
@@ -21,7 +21,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFf5c034),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFFf5c034),
         centerTitle: true,
@@ -43,7 +43,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
               'Choose a hub near you to get started:',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.black,
+                color: Colors.black87,
                 height: 1.5,
               ),
             ),
@@ -71,7 +71,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
                       });
                     },
                     child: Card(
-                      color: const Color(0xFFf5c034),
+                      color: Colors.white,
                       elevation: 0,
                       margin: const EdgeInsets.only(bottom: 16),
                       shape: RoundedRectangleBorder(
@@ -114,8 +114,8 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
                                         : "Waitlist: $waitlist",
                                     style: TextStyle(
                                       color: hasAvailability
-                                          ? Colors.black
-                                          : Colors.black,
+                                          ? Colors.green
+                                          : Colors.red,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -138,7 +138,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
             const Text(
               "💡 It is recommended that you select a hub close to the area you’re willing to operate in for smooth off-road maintenance and support.",
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.black87,
                 fontSize: 14,
                 height: 1.4,
               ),
@@ -167,7 +167,7 @@ class _HubSelectionScreenState extends State<HubSelectionScreen> {
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFffd700),
-                  disabledBackgroundColor: Colors.black.withOpacity(0.6)[400],
+                  disabledBackgroundColor: Colors.grey[400],
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

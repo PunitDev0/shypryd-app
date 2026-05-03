@@ -1,21 +1,20 @@
-import "package:ShipRyd_app/core/constants/api_constants.dart";
-import 'package:ShipRyd_app/features/onboarding/presentation/pages/aadhar_screen.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/pages/agreement_screen.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/pages/bank_details_screen.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/pages/pan_screen.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/pages/profile_awaiting_screen.dart';
-// import 'package:ShipRyd_app/features/onboarding/presentation/pages/profile_awaiting_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/aadhar_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/agreement_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/bank_details_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/pan_screen.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/pages/profile_awaiting_screen.dart';
+// import 'package:Maxryd_app/features/onboarding/presentation/pages/profile_awaiting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/onboarding_bloc.dart';
-import 'package:ShipRyd_app/features/driver/domain/usecases/fetch_driver_profile.dart';
-import 'package:ShipRyd_app/features/driver/data/datasources/driver_remote_datasource.dart';
-import 'package:ShipRyd_app/features/driver/data/repositories/driver_repository_impl.dart';
-import 'package:ShipRyd_app/features/driver/domain/entities/driver_profile.dart';
+import 'package:Maxryd_app/features/driver/domain/usecases/fetch_driver_profile.dart';
+import 'package:Maxryd_app/features/driver/data/datasources/driver_remote_datasource.dart';
+import 'package:Maxryd_app/features/driver/data/repositories/driver_repository_impl.dart';
+import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
 import 'personal_details_screen.dart';
-import 'package:ShipRyd_app/features/home/presentation/pages/home_page.dart';
+import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 // import 'profile_awaiting_screen.dart';
@@ -81,7 +80,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
     final profile = driverProfile;
     return Scaffold(
-      backgroundColor: const Color(0xFFf5c034),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           "Onboarding Steps",
@@ -225,7 +224,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     try {
                       final response = await http.post(
                         Uri.parse(
-                            '${ApiConstants.baseUrl}/api/driver/complete-profile'),
+                            'http://192.168.1.43:5008/api/driver/complete-profile'),
                         headers: {
                           'Content-Type': 'application/json',
                           'Accept': 'application/json',
@@ -352,7 +351,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       required VoidCallback onTap,
       required bool hasData}) {
     return Card(
-      color: const Color(0xFFf5c034),
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
       child: ListTile(
@@ -368,9 +367,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ? const Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Awaiting", style: TextStyle(color: Colors.black)),
+                  Text("Awaiting", style: TextStyle(color: Colors.orange)),
                   SizedBox(width: 4),
-                  Icon(Icons.hourglass_empty, color: Colors.black),
+                  Icon(Icons.hourglass_empty, color: Colors.orange),
                 ],
               )
             : TextButton(

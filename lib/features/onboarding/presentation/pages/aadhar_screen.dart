@@ -1,12 +1,11 @@
-import "package:ShipRyd_app/core/constants/api_constants.dart";
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http_parser/http_parser.dart';
-import 'package:ShipRyd_app/features/onboarding/data/repositories/aadhar_repository.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/bloc/aadhar/aadhar_bloc.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
+import 'package:Maxryd_app/features/onboarding/data/repositories/aadhar_repository.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/aadhar/aadhar_bloc.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -32,7 +31,7 @@ class AadharVerificationScreen extends StatelessWidget {
       return null;
     }
     print('Uploading image: $imagePath');
-    final url = Uri.parse('${ApiConstants.baseUrl}/api/upload/image');
+    final url = Uri.parse('http://192.168.1.43:5008/api/upload/image');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $token';
     final file = File(imagePath);
@@ -97,7 +96,7 @@ class AadharVerificationScreen extends StatelessWidget {
       "aadhaarFrontImage": frontImageUrl,
       "aadhaarBackImage": backImageUrl,
     };
-    final url = Uri.parse('${ApiConstants.baseUrl}/api/driver/aadhaar');
+    final url = Uri.parse('http://192.168.1.43:5008/api/driver/aadhaar');
     final response = await http.put(
       url,
       headers: {
@@ -176,7 +175,7 @@ class AadharVerificationScreen extends StatelessWidget {
     List<String> images = ['', ''];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFf5c034),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: const Color(0xFFf5c034),
         elevation: 0,
@@ -197,7 +196,7 @@ class AadharVerificationScreen extends StatelessWidget {
                 children: [
                   const Text(
                     "Enter your Aadhaar details for verification",
-                    style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                    style: TextStyle(color: Colors.grey),
                   ),
                   const SizedBox(height: 20),
                   const Text("Aadhaar Number",
@@ -227,7 +226,7 @@ class AadharVerificationScreen extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
                   const Text("Upload both front and back sides.",
-                      style: TextStyle(color: Colors.black.withOpacity(0.6))),
+                      style: TextStyle(color: Colors.grey)),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -334,7 +333,7 @@ class AadharVerificationScreen extends StatelessWidget {
         ),
         child: imagePath.isEmpty
             ? const Center(
-                child: Icon(Icons.camera_alt, color: Colors.black.withOpacity(0.6), size: 40),
+                child: Icon(Icons.camera_alt, color: Colors.grey, size: 40),
               )
             : const Align(
                 alignment: Alignment.topRight,

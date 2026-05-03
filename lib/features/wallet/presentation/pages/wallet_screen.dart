@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:ShipRyd_app/core/constants/api_constants.dart';
-import 'package:ShipRyd_app/features/driver/domain/entities/driver_profile.dart';
-import 'package:ShipRyd_app/features/wallet/presentation/pages/my_subscription_screen.dart';
+import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
 
 class WalletScreen extends StatefulWidget {
   final DriverProfile? driverProfile;
@@ -42,7 +40,7 @@ class _WalletScreenState extends State<WalletScreen> {
       }
 
       final response = await http.get(
-        Uri.parse('${ApiConstants.baseUrl}/api/subscription/driver/$driverId'),
+        Uri.parse('http://192.168.1.43:5008/api/subscription/driver/$driverId'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -121,7 +119,7 @@ class _WalletScreenState extends State<WalletScreen> {
                     const Text(
                       "WALLET BALANCE",
                       style: TextStyle(
-                        color: const Color(0xFFf5c034)60,
+                        color: Colors.white60,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.2,
@@ -173,9 +171,9 @@ class _WalletScreenState extends State<WalletScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFf5c034),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.black.withOpacity(0.6).shade200),
+                    border: Border.all(color: Colors.grey.shade200),
                   ),
                   child: Column(
                     children: [
@@ -200,7 +198,7 @@ class _WalletScreenState extends State<WalletScreen> {
                                 ),
                                 Text(
                                   "Valid until ${DateFormat('dd MMM yyyy').format(DateTime.tryParse(activeSub.endDate!) ?? DateTime.now())}",
-                                  style: TextStyle(color: Colors.black.withOpacity(0.6)[600], fontSize: 13),
+                                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
                                 ),
                               ],
                             ),
@@ -208,12 +206,12 @@ class _WalletScreenState extends State<WalletScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.1),
+                              color: Colors.green.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Text(
                               "ACTIVE",
-                              style: TextStyle(color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
+                              style: TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold),
                             ),
                           ),
                         ],
@@ -225,7 +223,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Plan Amount", style: TextStyle(color: Colors.black.withOpacity(0.6)[600])),
+                          Text("Plan Amount", style: TextStyle(color: Colors.grey[600])),
                           Text("₹${activeSub.totalAmount}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                         ],
                       ),
@@ -236,7 +234,7 @@ class _WalletScreenState extends State<WalletScreen> {
                             child: OutlinedButton(
                               onPressed: () {},
                               style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: Colors.black.withOpacity(0.6).shade300),
+                                side: BorderSide(color: Colors.grey.shade300),
                                 padding: const EdgeInsets.symmetric(vertical: 15),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
@@ -246,12 +244,7 @@ class _WalletScreenState extends State<WalletScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => const MySubscriptionScreen()),
-                                );
-                              },
+                              onPressed: () {},
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: yellow,
                                 elevation: 0,
@@ -279,7 +272,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text("Recent Activity", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  TextButton(onPressed: () {}, child: const Text("See All", style: TextStyle(color: Colors.black))),
+                  TextButton(onPressed: () {}, child: const Text("See All", style: TextStyle(color: Colors.blue))),
                 ],
               ),
             ),
@@ -301,19 +294,19 @@ class _WalletScreenState extends State<WalletScreen> {
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFf5c034),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.black.withOpacity(0.6).shade100),
+                      border: Border.all(color: Colors.grey.shade100),
                     ),
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.red.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(Icons.arrow_upward, color: Colors.black, size: 20),
+                          child: const Icon(Icons.arrow_upward, color: Colors.red, size: 20),
                         ),
                         const SizedBox(width: 15),
                         Expanded(
@@ -326,14 +319,14 @@ class _WalletScreenState extends State<WalletScreen> {
                               ),
                               Text(
                                 DateFormat('dd MMM yyyy, hh:mm a').format(date),
-                                style: TextStyle(color: Colors.black.withOpacity(0.6)[500], fontSize: 12),
+                                style: TextStyle(color: Colors.grey[500], fontSize: 12),
                               ),
                             ],
                           ),
                         ),
                         Text(
                           "- ₹${sub['totalAmount']}",
-                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -361,9 +354,9 @@ class _WalletActionBtn extends StatelessWidget {
       onTap: onTap,
       child: Column(
         children: [
-          Icon(icon, color: const Color(0xFFf5c034), size: 28),
+          Icon(icon, color: Colors.white, size: 28),
           const SizedBox(height: 6),
-          Text(label, style: const TextStyle(color: const Color(0xFFf5c034)70, fontSize: 12)),
+          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
         ],
       ),
     );

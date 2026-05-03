@@ -1,10 +1,9 @@
-import 'package:ShipRyd_app/features/home/presentation/pages/home_page.dart';
+import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:ShipRyd_app/core/constants/api_constants.dart';
 
 class PaymentMethodScreen extends StatefulWidget {
   final Map<String, dynamic> selectedPlan;
@@ -57,7 +56,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Payment Successful! Verifying...'),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.green,
       ),
     );
 
@@ -73,7 +72,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Subscription activated successfully!'),
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.green,
         ),
       );
 
@@ -86,7 +85,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Payment verified but subscription activation failed'),
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.orange,
         ),
       );
     }
@@ -101,7 +100,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Payment Failed: ${response.message ?? "Unknown error"}'),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.red,
       ),
     );
   }
@@ -130,8 +129,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           ? 'weekly'
           : 'monthly';
 
-      print('Sending order creation request to: $url');
-      print('Request body: $body');
+      final url =
+          Uri.parse('http://192.168.1.43:5008/api/subscription/create-order');
+      final body = {'driverId': driverId, 'plan': plan};
 
       final response = await http.post(
         url,
@@ -141,10 +141,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
           'Accept': 'application/json',
         },
         body: jsonEncode(body),
-      ).timeout(const Duration(seconds: 15));
-
-      print('Order Creation Status Code: ${response.statusCode}');
-      print('Order Creation Response Body: ${response.body}');
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final fullData = jsonDecode(response.body);
@@ -193,7 +190,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
       if (token == null) throw Exception('No auth token');
 
       final url =
-          Uri.parse('${ApiConstants.baseUrl}/api/subscription/verify-payment');
+          Uri.parse('http://192.168.1.43:5008/api/subscription/verify-payment');
 
       final body = {
         'subscriptionId': subscriptionId,
@@ -248,22 +245,18 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
 
     final orderId = orderData['orderId'] as String;
     final razorpayKey = orderData['razorpayKeyId'] as String;
-    final amountInPaise = widget.totalAmount * 100;
 
-    print('Preparing Razorpay options...');
-    print('OrderId: $orderId');
-    print('Key: $razorpayKey');
-    print('Amount (Paise): $amountInPaise');
+    final amountInPaise = widget.totalAmount * 100;
 
     var options = {
       'key': razorpayKey, // ← Using the key returned from backend
       'amount': amountInPaise,
-      'name': 'ShipRyd',
+      'name': 'MaxRyd',
       'description': '${widget.selectedPlan['title']} Subscription',
       'order_id': orderId,
       'prefill': {
         'contact': '7017584814', // optional
-        'email': 'amar@shipryd.com',
+        'email': 'amar@maxryd.com',
       },
       'theme': {
         'color': '#f5c034',
@@ -286,9 +279,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFf5c034),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFf5c034),
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: const BackButton(color: Colors.black),
         title: const Text(
@@ -305,9 +298,9 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: const Color(0xFFf5c034),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black.withOpacity(0.6).shade200),
+                border: Border.all(color: Colors.grey.shade200),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -354,11 +347,11 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFFE9F9EE),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.black.shade200),
+                border: Border.all(color: Colors.green.shade200),
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.shield, color: Colors.black),
+                  Icon(Icons.shield, color: Colors.green),
                   SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -379,16 +372,22 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
         child: ElevatedButton(
           onPressed: selectedMethod != -1 && !isSubmitting
               ? () async {
-                  if (selectedMethod == 0) {
-                    // Pay Online → Razorpay
-                    await _openRazorpayCheckout();
-                  } else {
-                    // Cash → handle differently (if needed in future)
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Online payment is currently required for renewal.')),
-                    );
-                  }
+                  // if (selectedMethod == 0) {
+                  //   // Pay Online → Razorpay
+                  //   await _openRazorpayCheckout();
+                  // } else {
+                  //   // Cash → handle differently
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(
+                  //         content: Text('Cash on delivery selected')),
+                  //   );
+                  //   // Navigate to confirmation
+                  // }
+
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  );
                 }
               : null,
           style: ElevatedButton.styleFrom(
@@ -427,10 +426,10 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFFf5c034),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? Colors.black : Colors.black.withOpacity(0.6).shade300,
+            color: isSelected ? Colors.black : Colors.grey.shade300,
             width: 1.5,
           ),
         ),
@@ -448,13 +447,13 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
                   const SizedBox(height: 4),
                   Text(subtitle,
                       style:
-                          TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.6).shade600)),
+                          TextStyle(fontSize: 14, color: Colors.grey.shade600)),
                 ],
               ),
             ),
             Icon(
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected ? Colors.black : Colors.black.withOpacity(0.6),
+              color: isSelected ? Colors.black : Colors.grey,
             ),
           ],
         ),
@@ -469,7 +468,7 @@ class _PaymentMethodScreenState extends State<PaymentMethodScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: TextStyle(color: Colors.black.withOpacity(0.6).shade600, fontSize: 14)),
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 14)),
           Text(value,
               style:
                   const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),

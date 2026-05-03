@@ -1,13 +1,12 @@
-import "package:ShipRyd_app/core/constants/api_constants.dart";
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:ShipRyd_app/features/onboarding/presentation/bloc/bank/bank_bloc.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/bloc/bank/bank_event.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/bloc/bank/bank_state.dart';
-import 'package:ShipRyd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_bloc.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_event.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_state.dart';
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
     as onboarding;
-import 'package:ShipRyd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
+import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
     as onboardingEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,7 +59,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
       return;
     }
     final response = await http.put(
-      Uri.parse('${ApiConstants.baseUrl}/api/driver/bank'),
+      Uri.parse('http://192.168.1.43:5008/api/driver/bank'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -99,7 +98,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            backgroundColor: const Color(0xFFf5c034),
+            backgroundColor: Colors.white,
             appBar: AppBar(
               backgroundColor: const Color(0xFFf5c034),
               elevation: 0,
@@ -122,7 +121,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                     if (state is BankError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          backgroundColor: Colors.black,
+                          backgroundColor: Colors.red,
                           content: Text(state.message),
                         ),
                       );
@@ -160,7 +159,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                           const SizedBox(height: 4),
                           const Text(
                             "We need your bank details to process your earnings",
-                            style: TextStyle(color: Colors.black.withOpacity(0.6)),
+                            style: TextStyle(color: Colors.grey),
                           ),
                           const SizedBox(height: 20),
 
@@ -270,17 +269,17 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.black.shade50,
+                              color: Colors.blue.shade50,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Row(
                               children: [
-                                Icon(Icons.info_outline, color: Colors.black),
+                                Icon(Icons.info_outline, color: Colors.blue),
                                 SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     "Your bank details are securely encrypted and will only be used for insurance purposes.",
-                                    style: TextStyle(color: Colors.black),
+                                    style: TextStyle(color: Colors.blue),
                                   ),
                                 ),
                               ],

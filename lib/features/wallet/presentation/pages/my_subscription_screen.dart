@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:ShipRyd_app/core/constants/api_constants.dart';
-import 'package:ShipRyd_app/features/wallet/presentation/pages/payment_method_screen.dart';
+import 'package:Maxryd_app/features/wallet/presentation/pages/payment_method_screen.dart';
 
 class MySubscriptionScreen extends StatefulWidget {
   const MySubscriptionScreen({super.key});
@@ -36,22 +35,16 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
     try {
       final token = await _storage.read(key: 'auth_token');
-      final driverId = await _storage.read(key: 'driverId');
-      
-      print('Token retrieved: ${token != null ? "YES" : "NULL"}');
-      print('DriverId retrieved: ${driverId ?? "NULL"}');
+      print(
+          'Token retrieved: ${token != null ? token.substring(0, 20) + "..." : "NULL - no token"}');
 
       if (token == null) {
+        print('ERROR: No auth token found in secure storage');
         throw Exception('No auth token found. Please login again.');
       }
 
-      String urlStr = '${ApiConstants.baseUrl}/api/subscription/plans';
-      if (driverId != null && driverId != 'null' && driverId.isNotEmpty) {
-        urlStr += '?driverId=$driverId';
-      }
-      
-      final url = Uri.parse(urlStr);
-      print('Fetching plans from: $url');
+      final url = Uri.parse('http://192.168.1.43:5008/api/subscription/plans');
+      print('API URL: $url');
 
       final response = await http.get(
         url,
@@ -59,20 +52,29 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',
         },
-      ).timeout(const Duration(seconds: 15));
+      );
 
-      print('Plans API Response Status: ${response.statusCode}');
-      
+      print('Response Status Code: ${response.statusCode}');
+      print('Response Headers: ${response.headers}');
+      print('Raw Response Body: ${response.body}');
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        if (data['success'] == true && data['plans'] != null) {
+        print('Parsed JSON success: ${data['success']}');
+
+        if (data['success'] == true) {
           final fetchedPlans = List<Map<String, dynamic>>.from(data['plans']);
+          print('Number of plans received: ${fetchedPlans.length}');
+          print('Plans data: $fetchedPlans');
+
           setState(() {
             plans = fetchedPlans;
             isLoading = false;
           });
         } else {
-          throw Exception(data['message'] ?? 'Invalid response from server');
+          final msg = data['message'] ?? 'API returned success=false';
+          print('API Error Message: $msg');
+          throw Exception(msg);
         }
       } else if (response.statusCode == 401) {
         print('401 Unauthorized - Token likely invalid/expired');
@@ -114,7 +116,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
             : null;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFf5c034),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: yellow,
         elevation: 0,
@@ -134,7 +136,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                     children: [
                       Text('Error: $errorMessage',
                           style:
-                              const TextStyle(color: Colors.black, fontSize: 16),
+                              const TextStyle(color: Colors.red, fontSize: 16),
                           textAlign: TextAlign.center),
                       const SizedBox(height: 16),
                       ElevatedButton(
@@ -161,11 +163,11 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                             margin: const EdgeInsets.only(bottom: 16),
                             padding: const EdgeInsets.all(18),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFf5c034),
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color:
-                                    isSelected ? yellow : Colors.black.withOpacity(0.6).shade300,
+                                    isSelected ? yellow : Colors.grey.shade300,
                                 width: 1.5,
                               ),
                               boxShadow: [
@@ -213,7 +215,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                             : '',
                                         style: const TextStyle(
                                           fontSize: 16,
-                                          color: Colors.black,
+                                          color: Colors.black54,
                                         ),
                                       ),
                                     ],
@@ -223,14 +225,14 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                 Text(
                                   plan['description'] as String? ?? '',
                                   style: const TextStyle(
-                                      fontSize: 14, color: Colors.black),
+                                      fontSize: 14, color: Colors.black54),
                                 ),
                                 const SizedBox(height: 10),
                                 Text(
                                   'First time total: ₹${plan['firstTimePrice']}',
                                   style: const TextStyle(
                                     fontSize: 14,
-                                    color: Colors.black,
+                                    color: Colors.green,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -238,7 +240,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                   'Renewal: ₹${plan['renewalPrice']}',
                                   style: const TextStyle(
                                     fontSize: 14,
-                                    color: Colors.black,
+                                    color: Colors.black87,
                                   ),
                                 ),
                                 const SizedBox(height: 10),
@@ -251,7 +253,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                                 ),
                                 const SizedBox(height: 6),
                                 ...[
-                                  "3 swaps/day - 4th or more swaps ₹65/swap",
+                                  "2 swaps/day - 3rd or more swaps ₹65/swap",
                                   "Regular maintenance included",
                                   "Damage caused by driver will be charged",
                                 ].map(
@@ -306,7 +308,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                             'price': '₹${selected['basePrice']}',
                             'duration': selected['duration'],
                             'rules': const [
-                              "3 swaps/day - 4th or more swaps ₹65/swap",
+                              "2 swaps/day - 3rd or more swaps ₹65/swap",
                               "Regular maintenance included",
                               "Damage caused by driver will be charged",
                             ],
@@ -321,12 +323,12 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: selectedPlanIndex >= 0
                   ? const Color(0xFFFFD600)
-                  : Colors.black.withOpacity(0.6).shade300,
+                  : Colors.grey.shade300,
               foregroundColor: Colors.black,
               minimumSize: const Size(double.infinity, 56),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
-              disabledBackgroundColor: Colors.black.withOpacity(0.6).shade300,
+              disabledBackgroundColor: Colors.grey.shade300,
               disabledForegroundColor: Colors.black,
             ),
             child: Text(

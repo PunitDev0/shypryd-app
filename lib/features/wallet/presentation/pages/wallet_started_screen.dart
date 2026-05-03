@@ -1,4 +1,4 @@
-import 'package:ShipRyd_app/features/wallet/presentation/pages/my_subscription_screen.dart';
+import 'package:Maxryd_app/features/wallet/presentation/pages/my_subscription_screen.dart';
 import 'package:flutter/material.dart';
 
 class WalletEmptyScreen extends StatelessWidget {
@@ -9,7 +9,7 @@ class WalletEmptyScreen extends StatelessWidget {
     const yellow = Color(0xFFFFD700);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFf5c034),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: yellow,
         elevation: 0,
@@ -50,7 +50,7 @@ class WalletEmptyScreen extends StatelessWidget {
                 child: const Icon(
                   Icons.electric_scooter,
                   size: 48,
-                  color: const Color(0xFFf5c034),
+                  color: Colors.white,
                 ),
               ),
 
@@ -73,7 +73,7 @@ class WalletEmptyScreen extends StatelessWidget {
                 "Get started by choosing a subscription plan\nand making your first payment.",
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.black,
+                  color: Colors.black54,
                 ),
                 textAlign: TextAlign.center,
               ),

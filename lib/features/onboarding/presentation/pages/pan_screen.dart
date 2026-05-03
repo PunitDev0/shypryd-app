@@ -1,4 +1,3 @@
-import "package:ShipRyd_app/core/constants/api_constants.dart";
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -34,7 +33,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
       return null;
     }
     print('Uploading PAN image: $imagePath');
-    final url = Uri.parse('${ApiConstants.baseUrl}/api/upload/image');
+    final url = Uri.parse('http://192.168.1.43:5008/api/upload/image');
     final request = http.MultipartRequest('POST', url);
     String mimeType = 'image/jpeg';
     if (imagePath.toLowerCase().endsWith('.png')) mimeType = 'image/png';
@@ -112,7 +111,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
       return;
     }
     final response = await http.put(
-      Uri.parse('${ApiConstants.baseUrl}/api/driver/pan'),
+      Uri.parse('http://192.168.1.43:5008/api/driver/pan'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -192,7 +191,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            backgroundColor: const Color(0xFFf5c034),
+            backgroundColor: Colors.white,
             appBar: AppBar(
               backgroundColor: const Color(0xFFf5c034),
               elevation: 0,
@@ -213,13 +212,13 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text("✅ PAN details saved successfully!"),
-                          backgroundColor: Colors.black,
+                          backgroundColor: Colors.green,
                         ),
                       );
                     } else if (state is PanError) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          backgroundColor: Colors.black,
+                          backgroundColor: Colors.red,
                           content: Text(state.message),
                         ),
                       );
@@ -241,7 +240,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                           const SizedBox(height: 8),
                           const Text(
                               "We need to verify your identity for compliance",
-                              style: TextStyle(color: Colors.black.withOpacity(0.6))),
+                              style: TextStyle(color: Colors.grey)),
                           const SizedBox(height: 20),
                           const Text("PAN Number",
                               style: TextStyle(fontWeight: FontWeight.w600)),
@@ -314,7 +313,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                               height: 120,
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6).shade50,
+                                color: Colors.grey.shade50,
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                     color: const Color(0xFFf5c034), width: 2),
@@ -336,7 +335,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                                           Text(
                                               "Tap to select from camera or gallery",
                                               style: TextStyle(
-                                                  color: Colors.black.withOpacity(0.6),
+                                                  color: Colors.grey,
                                                   fontSize: 12)),
                                         ],
                                       ),

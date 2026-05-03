@@ -12,11 +12,11 @@ class BatterySwapStationsScreen extends StatelessWidget {
         children: [
           /// MAP PLACEHOLDER
           Container(
-            color: Colors.black.withOpacity(0.6).shade200,
+            color: Colors.grey.shade200,
             alignment: Alignment.center,
             child: const Text(
               'Map View (Google Maps / Mapbox)',
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(color: Colors.black54),
             ),
           ),
 
@@ -77,13 +77,13 @@ class BatterySwapStationsScreen extends StatelessWidget {
                 height: 36,
                 width: 36,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Colors.green,
                   shape: BoxShape.circle,
-                  border: Border.all(color: const Color(0xFFf5c034), width: 2),
+                  border: Border.all(color: Colors.white, width: 2),
                 ),
                 child: const Icon(
                   Icons.flash_on,
-                  color: const Color(0xFFf5c034),
+                  color: Colors.white,
                   size: 18,
                 ),
               ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ShipRyd_app/features/driver/domain/entities/driver_profile.dart';
+import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
 
 class DriverProfileScreen extends StatelessWidget {
   final DriverProfile driverProfile;
@@ -14,7 +14,7 @@ class DriverProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFf5c034),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: yellow,
         elevation: 0,
@@ -127,7 +127,7 @@ class DriverProfileScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFf5c034),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -181,7 +181,7 @@ class DriverProfileScreen extends StatelessWidget {
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.deepOrange,
-          foregroundColor: const Color(0xFFf5c034),
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),
       ),
@@ -230,7 +230,7 @@ class _ProfileRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 13, color: Colors.black.withOpacity(0.6)),
+                  style: const TextStyle(fontSize: 13, color: Colors.grey),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -244,7 +244,7 @@ class _ProfileRow extends StatelessWidget {
             Icon(
               Icons.copy,
               size: 18,
-              color: Colors.black.withOpacity(0.6).shade600,
+              color: Colors.grey.shade600,
             ),
         ],
       ),
