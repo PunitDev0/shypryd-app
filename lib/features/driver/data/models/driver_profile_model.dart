@@ -1,4 +1,4 @@
-import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
+import 'package:ShipRyd_app/features/driver/domain/entities/driver_profile.dart';
 
 class DriverProfileModel extends DriverProfile {
   const DriverProfileModel({
@@ -63,8 +63,8 @@ class DriverProfileModel extends DriverProfile {
       activeSubscription: json['activeSubscription'] != null
           ? ActiveSubscription.fromJson(json['activeSubscription'])
           : null,
-      vehicle: json['vehicle'] != null
-          ? VehicleDetails.fromJson(json['vehicle'])
+      vehicle: (json['vehicle'] != null && json['vehicle'] is Map)
+          ? VehicleDetails.fromJson(json['vehicle'] as Map<String, dynamic>)
           : null,
     );
   }

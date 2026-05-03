@@ -1,16 +1,16 @@
 {
   "project_info": {
     "project_number": "335767963568",
-    "firebase_url": "https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "maxryd-2026",
-    "storage_bucket": "maxryd-2026.firebasestorage.app"
+    "firebase_url": "https://shipryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "shipryd-2026",
+    "storage_bucket": "shipryd-2026.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:335767963568:android:2787fb892fb7c228517875",
         "android_client_info": {
-          "package_name": "com.maxryd.app"
+          "package_name": "com.shipryd.app"
         }
       },
       "oauth_client": [],

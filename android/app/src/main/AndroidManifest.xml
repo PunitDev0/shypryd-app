@@ -8,7 +8,7 @@
     <!-- For Android 13+ (API 33+), these are recommended instead of READ/WRITE_EXTERNAL_STORAGE -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <application
-        android:label="Maxryd"
+        android:label="ShipRyd"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">

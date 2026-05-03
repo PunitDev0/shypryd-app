@@ -1,9 +1,10 @@
+import "package:ShipRyd_app/core/constants/api_constants.dart";
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
 
-import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
+import 'package:ShipRyd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -69,7 +70,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
         }
       }
     };
-    final url = Uri.parse('http://192.168.1.43:5008/api/driver/personal-info');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/driver/personal-info');
     final response = await http.put(
       url,
       headers: {
@@ -143,7 +144,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFf5c034),
       appBar: AppBar(
         backgroundColor: const Color(0xFFf5c034),
         elevation: 0,
@@ -278,7 +279,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
               padding: const EdgeInsets.all(12),
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: Colors.black.withOpacity(0.6).shade100,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -310,7 +311,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: Colors.black.withOpacity(0.6).shade100,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -364,9 +365,9 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 4),
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFFf5c034) : Colors.white,
+            color: isSelected ? const Color(0xFFf5c034) : const Color(0xFFf5c034),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
+            border: Border.all(color: Colors.black.withOpacity(0.6).shade300),
           ),
           child: Column(
             children: [
@@ -404,7 +405,7 @@ Widget _buildReferenceField({
 }) {
   return Container(
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: const Color(0xFFf5c034),
       borderRadius: BorderRadius.circular(10),
     ),
     child: TextField(
@@ -425,7 +426,7 @@ Widget _buildReferencePhoneFieldSimple({
 }) {
   return Container(
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: const Color(0xFFf5c034),
       borderRadius: BorderRadius.circular(10),
     ),
     child: TextField(

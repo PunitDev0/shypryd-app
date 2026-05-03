@@ -1,3 +1,4 @@
+import "package:ShipRyd_app/core/constants/api_constants.dart";
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -96,7 +97,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFf5c034),
       appBar: AppBar(
         backgroundColor: yellow,
         elevation: 0,
@@ -141,7 +142,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
             right: 0,
             bottom: 30,
             child: Container(
-              color: Colors.white,
+              color: const Color(0xFFf5c034),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: SizedBox(
                 width: double.infinity,
@@ -191,7 +192,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
         child: DropdownButton<String>(
           value: selectedProblemType,
           hint: const Text('Select problem type',
-              style: TextStyle(color: Colors.black54)),
+              style: TextStyle(color: Colors.black)),
           isExpanded: true,
           items: problemTypes
               .map((type) => DropdownMenuItem(value: type, child: Text(type)))
@@ -216,7 +217,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
         expands: true,
         decoration: const InputDecoration(
           hintText: 'Please explain your issue in detail...\n(Optional)',
-          hintStyle: TextStyle(color: Colors.black54),
+          hintStyle: TextStyle(color: Colors.black),
           border: InputBorder.none,
         ),
       ),
@@ -259,8 +260,8 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                 height: 80,
                 width: 80,
                 decoration: const BoxDecoration(
-                    color: Colors.redAccent, shape: BoxShape.circle),
-                child: const Icon(Icons.stop, size: 36, color: Colors.white),
+                    color: Colors.blackAccent, shape: BoxShape.circle),
+                child: const Icon(Icons.stop, size: 36, color: const Color(0xFFf5c034)),
               ),
             )
           else ...[
@@ -268,7 +269,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
               height: 80,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Colors.black.withOpacity(0.6)[200],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
@@ -277,7 +278,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                       ? Icons.pause_circle_filled
                       : Icons.play_circle_fill,
                   size: 48,
-                  color: Colors.black54,
+                  color: Colors.black,
                 ),
               ),
             ),
@@ -294,7 +295,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                 const SizedBox(width: 32),
                 IconButton(
                   icon: const Icon(Icons.delete_forever,
-                      size: 36, color: Colors.red),
+                      size: 36, color: Colors.black),
                   onPressed: () => setState(() => voiceNotePath = null),
                 ),
                 const SizedBox(width: 32),
@@ -315,7 +316,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                         ? 'Playing...'
                         : 'Voice note recorded – tap play to listen')
                     : 'Tap microphone to start recording'),
-            style: const TextStyle(color: Colors.black54),
+            style: const TextStyle(color: Colors.black),
             textAlign: TextAlign.center,
           ),
         ],
@@ -340,18 +341,18 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                 decoration: BoxDecoration(
                   border: Border.all(color: borderColor),
                   borderRadius: BorderRadius.circular(12),
-                  color: Colors.grey[100],
+                  color: Colors.black.withOpacity(0.6)[100],
                 ),
                 child: file == null
                     ? const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.camera_alt,
-                              size: 32, color: Colors.black54),
+                              size: 32, color: Colors.black),
                           SizedBox(height: 4),
                           Text('Add',
                               style: TextStyle(
-                                  fontSize: 12, color: Colors.black54)),
+                                  fontSize: 12, color: Colors.black)),
                         ],
                       )
                     : ClipRRect(
@@ -362,7 +363,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                           errorBuilder: (context, error, stackTrace) =>
                               const Icon(
                             Icons.broken_image,
-                            color: Colors.red,
+                            color: Colors.black,
                             size: 40,
                           ),
                         ),
@@ -377,9 +378,9 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: const BoxDecoration(
-                          color: Colors.red, shape: BoxShape.circle),
+                          color: Colors.black, shape: BoxShape.circle),
                       child: const Icon(Icons.close,
-                          size: 16, color: Colors.white),
+                          size: 16, color: const Color(0xFFf5c034)),
                     ),
                   ),
                 ),
@@ -497,7 +498,7 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
         throw Exception('No auth token found. Please login again.');
       }
 
-      final uri = Uri.parse('http://192.168.1.43:5008/api/ticket/raise');
+      final uri = Uri.parse('${ApiConstants.baseUrl}/api/ticket/raise');
       print('API Endpoint: $uri');
       print('Problem Type: $selectedProblemType');
       print('Description length: ${_descController.text.trim().length} chars');

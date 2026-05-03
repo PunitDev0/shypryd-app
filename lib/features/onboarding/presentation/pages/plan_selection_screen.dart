@@ -1,6 +1,6 @@
-import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
-import 'package:Maxryd_app/features/onboarding/presentation/pages/vehicle_allotment_screen.dart';
-import 'package:Maxryd_app/features/wallet/presentation/pages/payment_method_screen.dart';
+import 'package:ShipRyd_app/features/home/presentation/pages/home_page.dart';
+import 'package:ShipRyd_app/features/onboarding/presentation/pages/vehicle_allotment_screen.dart';
+import 'package:ShipRyd_app/features/wallet/presentation/pages/payment_method_screen.dart';
 import 'package:flutter/material.dart';
 
 class PlanSelectionScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
         });
       },
       child: Card(
-        color: Colors.white,
+        color: const Color(0xFFf5c034),
         elevation: 0,
         margin: const EdgeInsets.only(bottom: 16),
         shape: RoundedRectangleBorder(
@@ -62,7 +62,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                         price,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: Colors.black,
                           fontSize: 16,
                         ),
                       ),
@@ -80,7 +80,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
               const SizedBox(height: 6),
               const Text(
                 "+5% GST\n₹1000 deposit (one time)",
-                style: TextStyle(fontSize: 13, color: Colors.grey),
+                style: TextStyle(fontSize: 13, color: Colors.black.withOpacity(0.6)),
               ),
               const SizedBox(height: 10),
               const Divider(),
@@ -106,7 +106,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFf5c034),
       appBar: AppBar(
         backgroundColor: const Color(0xFFf5c034),
         centerTitle: true,
@@ -182,7 +182,7 @@ class _PlanSelectionScreenState extends State<PlanSelectionScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: selectedPlan != null
                       ? const Color(0xFFf5c034)
-                      : Colors.grey[400],
+                      : Colors.black.withOpacity(0.6)[400],
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

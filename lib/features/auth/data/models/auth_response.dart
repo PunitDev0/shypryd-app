@@ -1,5 +1,5 @@
 // features/auth/data/models/auth_response.dart
-import 'package:Maxryd_app/features/auth/data/models/user_models.dart';
+import 'package:ShipRyd_app/features/auth/data/models/user_models.dart';
 
 class AuthResponse {
   final UserModel user;

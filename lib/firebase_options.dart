@@ -44,10 +44,10 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyCSuSiylAIdq8sjOBjV0onVT7NhbgwXAEM',
     appId: '1:335767963568:web:2ef67caae916100b517875',
     messagingSenderId: '335767963568',
-    projectId: 'maxryd-2026',
-    authDomain: 'maxryd-2026.firebaseapp.com',
-    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'maxryd-2026.firebasestorage.app',
+    projectId: 'shipryd-2026',
+    authDomain: 'shipryd-2026.firebaseapp.com',
+    databaseURL: 'https://shipryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'shipryd-2026.firebasestorage.app',
     measurementId: 'G-FNBHVG61LZ',
   );
 
@@ -55,18 +55,18 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyB6q1NImvNF9kmAFbcp9dT52x_6MpW1Yus',
     appId: '1:335767963568:android:2787fb892fb7c228517875',
     messagingSenderId: '335767963568',
-    projectId: 'maxryd-2026',
-    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'maxryd-2026.firebasestorage.app',
+    projectId: 'shipryd-2026',
+    databaseURL: 'https://shipryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'shipryd-2026.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBNIseNLxi1WMprYlm8uQvrsR-yxiNNABA',
     appId: '1:335767963568:ios:b29c4791557f3762517875',
     messagingSenderId: '335767963568',
-    projectId: 'maxryd-2026',
-    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'maxryd-2026.firebasestorage.app',
+    projectId: 'shipryd-2026',
+    databaseURL: 'https://shipryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'shipryd-2026.firebasestorage.app',
     iosBundleId: 'com.example.ridezzyApp',
   );
 
@@ -74,9 +74,9 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyBNIseNLxi1WMprYlm8uQvrsR-yxiNNABA',
     appId: '1:335767963568:ios:b29c4791557f3762517875',
     messagingSenderId: '335767963568',
-    projectId: 'maxryd-2026',
-    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'maxryd-2026.firebasestorage.app',
+    projectId: 'shipryd-2026',
+    databaseURL: 'https://shipryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'shipryd-2026.firebasestorage.app',
     iosBundleId: 'com.example.ridezzyApp',
   );
 
@@ -84,10 +84,10 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyCSuSiylAIdq8sjOBjV0onVT7NhbgwXAEM',
     appId: '1:335767963568:web:d0501a51a28978ce517875',
     messagingSenderId: '335767963568',
-    projectId: 'maxryd-2026',
-    authDomain: 'maxryd-2026.firebaseapp.com',
-    databaseURL: 'https://maxryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
-    storageBucket: 'maxryd-2026.firebasestorage.app',
+    projectId: 'shipryd-2026',
+    authDomain: 'shipryd-2026.firebaseapp.com',
+    databaseURL: 'https://shipryd-2026-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'shipryd-2026.firebasestorage.app',
     measurementId: 'G-LBN8VHD9BV',
   );
 

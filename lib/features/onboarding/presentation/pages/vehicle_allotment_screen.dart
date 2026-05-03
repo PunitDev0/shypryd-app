@@ -1,4 +1,4 @@
-import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
+import 'package:ShipRyd_app/features/home/presentation/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -80,7 +80,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
     const lightGray = Color(0xFFE8E6E6);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFf5c034),
       appBar: AppBar(
         backgroundColor: yellow,
         centerTitle: true,
@@ -100,7 +100,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
           children: [
             // Allotment Info
             Card(
-              color: Colors.white,
+              color: const Color(0xFFf5c034),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
                 side: const BorderSide(color: lightGray, width: 2),
@@ -129,7 +129,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                     const Text(
                       "⚠️ Your allotment code is valid only on the day of pickup. "
                       "If pickup is not done, you can reschedule once based on hub availability.",
-                      style: TextStyle(color: Colors.redAccent, fontSize: 13),
+                      style: TextStyle(color: Colors.blackAccent, fontSize: 13),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 12),
@@ -151,7 +151,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
+                            backgroundColor: const Color(0xFFf5c034),
                             elevation: 0,
                             side: const BorderSide(
                                 color: Colors.black, width: 1.5),
@@ -166,19 +166,19 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                         OutlinedButton.icon(
                           onPressed: () {},
                           icon: const Icon(Icons.cancel_outlined,
-                              color: Colors.red),
+                              color: Colors.black),
                           label: const Text(
                             "Cancel Plan",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Colors.red,
+                              color: Colors.black,
                             ),
                           ),
                           style: OutlinedButton.styleFrom(
                             side:
-                                const BorderSide(color: Colors.red, width: 1.5),
+                                const BorderSide(color: Colors.black, width: 1.5),
 
-                            backgroundColor: Colors.white, // light red tint
+                            backgroundColor: const Color(0xFFf5c034), // light red tint
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -193,7 +193,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                         child: Text(
                           "New Pickup Date: ${DateFormat('dd MMM yyyy').format(selectedDate!)}",
                           style: const TextStyle(
-                              color: Colors.green, fontWeight: FontWeight.w600),
+                              color: Colors.black, fontWeight: FontWeight.w600),
                         ),
                       ),
                   ],
@@ -222,7 +222,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                         },
                         shape: const CircleBorder(),
                         activeColor: const Color(0xFFf5c034), // yellow fill
-                        checkColor: Colors.white, // white tick
+                        checkColor: const Color(0xFFf5c034), // white tick
                         side: const BorderSide(
                             color: Color(0xFFE8E6E6), width: 1.5),
                       ),
@@ -264,7 +264,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
               onPressed: () => setState(() => videoWatched = true),
               style: ElevatedButton.styleFrom(
                 elevation: 0,
-                backgroundColor: Colors.white, // color change
+                backgroundColor: const Color(0xFFf5c034), // color change
                 foregroundColor: Colors.black,
                 side: BorderSide(
                     color: videoWatched
@@ -290,7 +290,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          backgroundColor: Colors.white,
+                          backgroundColor: const Color(0xFFf5c034),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -320,7 +320,7 @@ class _VehicleAllotmentScreenState extends State<VehicleAllotmentScreen> {
                                 "Please proceed to the hub counter\nto collect your scooter.",
                                 style: TextStyle(
                                   fontSize: 15,
-                                  color: Colors.black54,
+                                  color: Colors.black,
                                 ),
                                 textAlign: TextAlign.center,
                               ),

@@ -1,4 +1,4 @@
-import 'package:Maxryd_app/features/auth/data/models/auth_response.dart';
+import 'package:ShipRyd_app/features/auth/data/models/auth_response.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecase.dart';

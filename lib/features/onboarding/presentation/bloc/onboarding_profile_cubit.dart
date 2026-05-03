@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
-import 'package:Maxryd_app/features/driver/domain/usecases/fetch_driver_profile.dart';
+import 'package:ShipRyd_app/features/driver/domain/entities/driver_profile.dart';
+import 'package:ShipRyd_app/features/driver/domain/usecases/fetch_driver_profile.dart';
 
 class OnboardingProfileCubit extends Cubit<DriverProfile?> {
   final FetchDriverProfile fetchDriverProfile;

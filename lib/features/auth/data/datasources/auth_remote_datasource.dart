@@ -1,9 +1,10 @@
+import "package:ShipRyd_app/core/constants/api_constants.dart";
 import 'dart:convert';
 
-import 'package:Maxryd_app/core/error/exceptions.dart';
-import 'package:Maxryd_app/features/auth/data/models/auth_response.dart';
+import 'package:ShipRyd_app/core/error/exceptions.dart';
+import 'package:ShipRyd_app/features/auth/data/models/auth_response.dart';
 
-import 'package:Maxryd_app/features/auth/domain/usescases/phone_otp_params.dart';
+import 'package:ShipRyd_app/features/auth/domain/usescases/phone_otp_params.dart';
 import 'package:http/http.dart' as http;
 
 abstract class AuthRemoteDataSource {
@@ -12,7 +13,7 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  static const String baseUrl = 'http://192.168.1.43:5008';
+  static const String baseUrl = '${ApiConstants.baseUrl}';
 
   @override
   Future<void> sendOtp(String phoneNumber) async {

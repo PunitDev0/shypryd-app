@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:Maxryd_app/core/error/failures.dart';
-import 'package:Maxryd_app/features/driver/data/datasources/driver_remote_datasource.dart';
-import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
-import 'package:Maxryd_app/features/driver/domain/repositories/driver_repository.dart';
+import 'package:ShipRyd_app/core/error/failures.dart';
+import 'package:ShipRyd_app/features/driver/data/datasources/driver_remote_datasource.dart';
+import 'package:ShipRyd_app/features/driver/domain/entities/driver_profile.dart';
+import 'package:ShipRyd_app/features/driver/domain/repositories/driver_repository.dart';
 
 class DriverRepositoryImpl implements DriverRepository {
   final DriverRemoteDataSource remoteDataSource;

@@ -38,7 +38,7 @@ class HelpCenterScreen extends StatelessWidget {
               height: 4,
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.grey[400],
+                color: Colors.black.withOpacity(0.6)[400],
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -59,7 +59,7 @@ class HelpCenterScreen extends StatelessWidget {
                 _callNumber(number1);
                 Navigator.pop(context);
               },
-              tileColor: Colors.grey[100],
+              tileColor: Colors.black.withOpacity(0.6)[100],
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
@@ -73,7 +73,7 @@ class HelpCenterScreen extends StatelessWidget {
                 _callNumber(number2);
                 Navigator.pop(context);
               },
-              tileColor: Colors.grey[100],
+              tileColor: Colors.black.withOpacity(0.6)[100],
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
@@ -87,7 +87,7 @@ class HelpCenterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFf5c034),
       body: Column(
         children: [
           // Yellow Header
@@ -138,7 +138,7 @@ class HelpCenterScreen extends StatelessWidget {
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: const Color(0xFFf5c034).withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -155,14 +155,14 @@ class HelpCenterScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Colors.black.withOpacity(0.6)[100],
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: const TextField(
                     decoration: InputDecoration(
                       hintText: 'Search for issues...',
                       border: InputBorder.none,
-                      icon: Icon(Icons.search, color: Colors.grey),
+                      icon: Icon(Icons.search, color: Colors.black.withOpacity(0.6)),
                     ),
                   ),
                 ),
@@ -188,7 +188,7 @@ class HelpCenterScreen extends StatelessWidget {
               children: [
                 _HelpTile(
                   icon: Icons.support_agent,
-                  iconColor: Colors.blue,
+                  iconColor: Colors.black,
                   iconBgColor: const Color(0xFFE3F2FD),
                   title: 'Raise Ticket',
                   onTap: () {
@@ -201,35 +201,35 @@ class HelpCenterScreen extends StatelessWidget {
                 ),
                 _HelpTile(
                   icon: Icons.receipt_long,
-                  iconColor: Colors.purple,
+                  iconColor: Colors.black,
                   iconBgColor: const Color(0xFFF3E5F5),
                   title: 'My Tickets',
                   onTap: () {},
                 ),
                 _HelpTile(
                   icon: Icons.phone_in_talk,
-                  iconColor: Colors.orange,
+                  iconColor: Colors.black,
                   iconBgColor: const Color(0xFFFFF3E0),
                   title: 'Helpline',
                   onTap: () => _showHelplineBottomSheet(context),
                 ),
                 _HelpTile(
                   icon: Icons.play_lesson,
-                  iconColor: Colors.green,
+                  iconColor: Colors.black,
                   iconBgColor: const Color(0xFFE8F5E9),
                   title: 'Tutorials',
                   onTap: () {},
                 ),
                 _HelpTile(
                   icon: Icons.location_on,
-                  iconColor: Colors.red,
+                  iconColor: Colors.black,
                   iconBgColor: const Color(0xFFFFEBEE),
                   title: 'Hub Locator',
                   onTap: () {},
                 ),
                 _HelpTile(
                   icon: Icons.info,
-                  iconColor: Colors.teal,
+                  iconColor: Colors.black,
                   iconBgColor: const Color(0xFFE0F2F1),
                   title: 'About App',
                   onTap: () {},
@@ -265,7 +265,7 @@ class _HelpTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFf5c034),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -274,7 +274,7 @@ class _HelpTile extends StatelessWidget {
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(color: Colors.grey.shade100),
+          border: Border.all(color: Colors.black.withOpacity(0.6).shade100),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -293,7 +293,7 @@ class _HelpTile extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Colors.black,
               ),
             ),
           ],

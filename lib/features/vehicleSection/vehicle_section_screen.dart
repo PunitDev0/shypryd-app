@@ -1,15 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:ShipRyd_app/features/driver/data/datasources/driver_remote_datasource.dart';
+import 'package:ShipRyd_app/features/driver/data/repositories/driver_repository_impl.dart';
+import 'package:ShipRyd_app/features/driver/domain/entities/driver_profile.dart';
+import 'package:ShipRyd_app/features/driver/domain/usecases/fetch_driver_profile.dart';
 
-class VehicleSectionScreen extends StatelessWidget {
+class VehicleSectionScreen extends StatefulWidget {
   final DriverProfile? driverProfile;
   const VehicleSectionScreen({super.key, this.driverProfile});
 
+  @override
+  State<VehicleSectionScreen> createState() => _VehicleSectionScreenState();
+}
+
+class _VehicleSectionScreenState extends State<VehicleSectionScreen> {
+  DriverProfile? _currentProfile;
+  bool _isRefreshing = false;
   static const yellow = Color(0xFFFFD600);
 
   @override
+  void initState() {
+    super.initState();
+    _currentProfile = widget.driverProfile;
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      _isRefreshing = true;
+    });
+
+    try {
+      const storage = FlutterSecureStorage();
+      final token = await storage.read(key: 'auth_token');
+      if (token == null) return;
+
+      final remote = DriverRemoteDataSourceImpl();
+      final repo = DriverRepositoryImpl(remoteDataSource: remote);
+      final usecase = FetchDriverProfile(repo);
+
+      final result = await usecase(token);
+
+      result.fold(
+        (failure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to refresh: ${failure.toString()}')),
+          );
+        },
+        (profile) {
+          setState(() {
+            _currentProfile = profile;
+          });
+        },
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      setState(() {
+        _isRefreshing = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final vehicle = driverProfile?.vehicle;
+    final vehicle = _currentProfile?.vehicle;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
@@ -27,58 +83,68 @@ class VehicleSectionScreen extends StatelessWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.black),
-            onPressed: () {},
+            icon: _isRefreshing 
+                ? const SizedBox(
+                    width: 20, 
+                    height: 20, 
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)
+                  )
+                : const Icon(Icons.refresh, color: Colors.black),
+            onPressed: _isRefreshing ? null : _refreshData,
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Vehicle ID Card
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 30),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: const BoxDecoration(
-                        color: yellow,
-                        shape: BoxShape.circle,
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              // Vehicle ID Card
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 30),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: const BoxDecoration(
+                          color: yellow,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.electric_scooter, color: Colors.black, size: 32),
                       ),
-                      child: const Icon(Icons.electric_scooter, color: Colors.black, size: 32),
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      vehicle?.vehicleId ?? "NOT ASSIGNED",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
+                      const SizedBox(height: 20),
+                      Text(
+                        vehicle?.vehicleId ?? "NOT ASSIGNED",
+                        style: const TextStyle(
+                          color: const Color(0xFFf5c034),
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "VEHICLE ID",
-                      style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
+                      const SizedBox(height: 8),
+                      const Text(
+                        "VEHICLE ID",
+                        style: TextStyle(
+                          color: const Color(0xFFf5c034)54,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
+              // Rest of the UI remains same...
 
             // Specifications Section
             Padding(
@@ -86,9 +152,9 @@ class VehicleSectionScreen extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color(0xFFf5c034),
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: Colors.black.withOpacity(0.6).shade200),
                 ),
                 child: Column(
                   children: [
@@ -108,7 +174,7 @@ class VehicleSectionScreen extends StatelessWidget {
                       icon: Icons.info_outline,
                       label: "Status",
                       value: vehicle?.status?.toUpperCase() ?? "---",
-                      valueColor: vehicle?.status == "assigned" ? Colors.green : Colors.orange,
+                      valueColor: vehicle?.status == "assigned" ? Colors.black : Colors.black,
                     ),
                   ],
                 ),
@@ -137,7 +203,7 @@ class VehicleSectionScreen extends StatelessWidget {
                   _ActionItem(
                     title: "Request Vehicle Return",
                     icon: Icons.assignment_return_outlined,
-                    textColor: Colors.red,
+                    textColor: Colors.black,
                     onTap: () {},
                   ),
                 ],
@@ -147,8 +213,9 @@ class VehicleSectionScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _SpecRow extends StatelessWidget {
@@ -168,20 +235,20 @@ class _SpecRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Colors.grey[400], size: 22),
+        Icon(icon, color: Colors.black.withOpacity(0.6)[400], size: 22),
         const SizedBox(width: 15),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
+              Text(label, style: TextStyle(color: Colors.black.withOpacity(0.6)[500], fontSize: 12)),
               const SizedBox(height: 2),
               Text(
                 value,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: valueColor ?? Colors.black87,
+                  color: valueColor ?? Colors.black,
                 ),
               ),
             ],
@@ -213,9 +280,9 @@ class _ActionItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFf5c034),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade100),
+          border: Border.all(color: Colors.black.withOpacity(0.6).shade100),
         ),
         child: Row(
           children: [
@@ -227,11 +294,11 @@ class _ActionItem extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
-                  color: textColor ?? Colors.black87,
+                  color: textColor ?? Colors.black,
                 ),
               ),
             ),
-            Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey[300]),
+            Icon(Icons.arrow_forward_ios, size: 14, color: Colors.black.withOpacity(0.6)[300]),
           ],
         ),
       ),

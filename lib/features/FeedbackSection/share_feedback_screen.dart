@@ -14,7 +14,7 @@ class _ShareFeedbackScreenState extends State<ShareFeedbackScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFf5c034),
       appBar: AppBar(
         backgroundColor: yellow,
         elevation: 0,
@@ -63,7 +63,7 @@ class _ShareFeedbackScreenState extends State<ShareFeedbackScreen> {
           Text(
             "Help us improve your delivery experience",
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: Colors.black.withOpacity(0.6)),
           ),
         ],
       ),
@@ -154,7 +154,7 @@ class _ShareFeedbackScreenState extends State<ShareFeedbackScreen> {
                 style: TextStyle(fontSize: 16),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.black,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -187,15 +187,15 @@ class _ShareFeedbackScreenState extends State<ShareFeedbackScreen> {
             height: 120,
             width: double.infinity,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
+              border: Border.all(color: Colors.black.withOpacity(0.6).shade400),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.add_a_photo_outlined, size: 36, color: Colors.grey),
+                Icon(Icons.add_a_photo_outlined, size: 36, color: Colors.black.withOpacity(0.6)),
                 SizedBox(height: 8),
-                Text("Tap to add photo", style: TextStyle(color: Colors.grey)),
+                Text("Tap to add photo", style: TextStyle(color: Colors.black.withOpacity(0.6))),
               ],
             ),
           ),
@@ -210,7 +210,7 @@ class _ShareFeedbackScreenState extends State<ShareFeedbackScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: const Color(0xFFf5c034),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(

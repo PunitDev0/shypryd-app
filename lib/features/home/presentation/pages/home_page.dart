@@ -1,14 +1,14 @@
 import 'dart:async';
-import 'package:Maxryd_app/features/BatterySwap/swap_journey_screen.dart';
-import 'package:Maxryd_app/features/FeedbackSection/share_feedback_screen.dart';
-import 'package:Maxryd_app/features/Profile/driver_profile_screen.dart';
-import 'package:Maxryd_app/features/driver/data/datasources/driver_remote_datasource.dart';
-import 'package:Maxryd_app/features/driver/data/repositories/driver_repository_impl.dart';
-import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
-import 'package:Maxryd_app/features/driver/domain/usecases/fetch_driver_profile.dart';
-import 'package:Maxryd_app/features/helpCenter/help_center_screen.dart';
-import 'package:Maxryd_app/features/vehicleSection/vehicle_section_screen.dart';
-import 'package:Maxryd_app/features/wallet/presentation/pages/wallet_screen.dart';
+import 'package:ShipRyd_app/features/BatterySwap/swap_journey_screen.dart';
+import 'package:ShipRyd_app/features/FeedbackSection/share_feedback_screen.dart';
+import 'package:ShipRyd_app/features/Profile/driver_profile_screen.dart';
+import 'package:ShipRyd_app/features/driver/data/datasources/driver_remote_datasource.dart';
+import 'package:ShipRyd_app/features/driver/data/repositories/driver_repository_impl.dart';
+import 'package:ShipRyd_app/features/driver/domain/entities/driver_profile.dart';
+import 'package:ShipRyd_app/features/driver/domain/usecases/fetch_driver_profile.dart';
+import 'package:ShipRyd_app/features/helpCenter/help_center_screen.dart';
+import 'package:ShipRyd_app/features/vehicleSection/vehicle_section_screen.dart';
+import 'package:ShipRyd_app/features/wallet/presentation/pages/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -156,7 +156,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // Vehicle
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const VehicleSectionScreen()),
+          MaterialPageRoute(
+            builder: (_) => VehicleSectionScreen(driverProfile: _driverProfile),
+          ),
         );
         break;
       case 2:
@@ -190,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFf5c034),
       drawer: const Drawer(), // Placeholder drawer
       body: SafeArea(
         child: SingleChildScrollView(
@@ -212,12 +214,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFf5c034),
+                        color: Colors.black,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Text(
-                        "maxryd",
+                        "shipryd",
                         style: TextStyle(
+                          color: Color(0xFFf5c034),
                           fontWeight: FontWeight.w900,
                           fontSize: 16,
                           letterSpacing: -0.5,
@@ -245,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         child: CircleAvatar(
                           radius: 18,
-                          backgroundColor: Colors.grey[200],
+                          backgroundColor: Colors.black.withOpacity(0.6)[200],
                           child: _isLoadingProfile
                               ? const SizedBox(
                                   width: 15,
@@ -271,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       greeting,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.grey[600],
+                        color: Colors.black.withOpacity(0.6)[600],
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -299,8 +302,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         title: "Plan Status",
                         value: planRemaining,
                         icon: Icons.timer_outlined,
-                        color: const Color(0xFFE8F5E9),
-                        iconColor: Colors.green,
+                        color: Colors.black.withOpacity(0.1),
+                        iconColor: Colors.black,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -309,8 +312,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         title: "Swap Access",
                         value: _driverProfile?.swapStatus == "unblocked" ? "Active" : "Blocked",
                         icon: Icons.check_circle_outline,
-                        color: const Color(0xFFE8F5E9),
-                        iconColor: Colors.green,
+                        color: Colors.black.withOpacity(0.1),
+                        iconColor: Colors.black,
                       ),
                     ),
                   ],
@@ -349,7 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: "My Vehicle",
                       subtitle: "Track status",
                       iconBg: const Color(0xFFE3F2FD),
-                      iconColor: Colors.blue,
+                      iconColor: Colors.black,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -366,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: "Battery Swap",
                       subtitle: "Swap history",
                       iconBg: const Color(0xFFE8F5E9),
-                      iconColor: Colors.green,
+                      iconColor: Colors.black,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -379,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: "My Wallet",
                       subtitle: "Earnings & Bal",
                       iconBg: const Color(0xFFF3E5F5),
-                      iconColor: Colors.purple,
+                      iconColor: Colors.black,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -396,7 +399,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: "Maintenance",
                       subtitle: "Service history",
                       iconBg: const Color(0xFFFFF3E0),
-                      iconColor: Colors.orange,
+                      iconColor: Colors.black,
                       onTap: () {},
                     ),
                     _ActionTile(
@@ -404,7 +407,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: "Hub Locator",
                       subtitle: "Find hubs",
                       iconBg: const Color(0xFFE0F2F1),
-                      iconColor: Colors.teal,
+                      iconColor: Colors.black,
                       onTap: () {},
                     ),
                     _ActionTile(
@@ -412,7 +415,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: "Help Center",
                       subtitle: "Get support",
                       iconBg: const Color(0xFFFFEBEE),
-                      iconColor: Colors.red,
+                      iconColor: Colors.black,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -429,10 +432,10 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFFf5c034),
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: const Color(0xFFf5c034).withOpacity(0.5),
         showSelectedLabels: false,
         showUnselectedLabels: false,
         items: const [
@@ -524,32 +527,26 @@ class _ActionTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.black,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-          border: Border.all(color: Colors.grey.shade100),
+          border: Border.all(color: Colors.black),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: iconBg,
+              decoration: const BoxDecoration(
+                color: Color(0xFFf5c034),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: iconColor, size: 28),
+              child: Icon(icon, color: Colors.black, size: 28),
             ),
             const SizedBox(height: 12),
             Text(
               title,
               style: const TextStyle(
+                color: Color(0xFFf5c034),
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -557,9 +554,9 @@ class _ActionTile extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
-                color: Colors.grey[500],
+                color: Color(0xFFf5c034),
               ),
             ),
           ],

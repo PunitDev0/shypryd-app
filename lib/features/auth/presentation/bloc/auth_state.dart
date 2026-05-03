@@ -1,8 +1,8 @@
 // part of 'auth_bloc.dart';
 
-import 'package:Maxryd_app/features/auth/data/models/auth_response.dart';
+import 'package:ShipRyd_app/features/auth/data/models/auth_response.dart';
 import 'package:equatable/equatable.dart';
-import 'package:Maxryd_app/features/auth/domain/entities/user.dart'; // ← Add this import
+import 'package:ShipRyd_app/features/auth/domain/entities/user.dart'; // ← Add this import
 
 abstract class AuthState extends Equatable {
   const AuthState();

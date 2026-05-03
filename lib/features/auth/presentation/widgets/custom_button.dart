@@ -20,12 +20,12 @@ class CustomButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: isLoading
-            ? CircularProgressIndicator(color: Colors.white)
-            : Text(text, style: TextStyle(color: Colors.white)),
+            ? CircularProgressIndicator(color: const Color(0xFFf5c034))
+            : Text(text, style: TextStyle(color: const Color(0xFFf5c034))),
       ),
     );
   }

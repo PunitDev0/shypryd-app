@@ -1,6 +1,6 @@
-import 'package:Maxryd_app/features/auth/domain/usescases/login_with_phone.dart';
-import 'package:Maxryd_app/features/auth/domain/usescases/verify_otp.dart';
-import 'package:Maxryd_app/firebase_options.dart';
+import 'package:ShipRyd_app/features/auth/domain/usescases/login_with_phone.dart';
+import 'package:ShipRyd_app/features/auth/domain/usescases/verify_otp.dart';
+import 'package:ShipRyd_app/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +33,7 @@ void main() async {
         body: Center(
           child: Text(
             'App failed to start: $e',
-            style: const TextStyle(color: Colors.red),
+            style: const TextStyle(color: Colors.black),
             textAlign: TextAlign.center,
           ),
         ),
@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'EV Ride App',
         theme: ThemeData(
-          primarySwatch: Colors.green, // EV green theme
+          primarySwatch: Colors.black, // EV green theme
           useMaterial3: true,
         ),
         home: const LoginPage(),

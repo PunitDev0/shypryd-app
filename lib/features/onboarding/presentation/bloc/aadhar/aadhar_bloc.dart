@@ -1,4 +1,4 @@
-import 'package:Maxryd_app/features/onboarding/data/repositories/aadhar_repository.dart';
+import 'package:ShipRyd_app/features/onboarding/data/repositories/aadhar_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'aadhar_event.dart';

@@ -1,8 +1,9 @@
-import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
+import "package:ShipRyd_app/core/constants/api_constants.dart";
+import 'package:ShipRyd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
     as onboardingEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
+import 'package:ShipRyd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart'
     as onboarding;
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -45,7 +46,7 @@ class _UserAgreementScreenState extends State<UserAgreementScreen> {
       builder: (context, state) {
         final bloc = context.read<onboarding.OnboardingBloc>();
         return Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: const Color(0xFFf5c034),
             appBar: AppBar(
               backgroundColor: const Color(0xFFf5c034),
               elevation: 0,
@@ -72,19 +73,19 @@ class _UserAgreementScreenState extends State<UserAgreementScreen> {
                     const SizedBox(height: 8),
                     const Text(
                       "Please read the agreement carefully and fully before proceeding.",
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: Colors.black.withOpacity(0.6)),
                     ),
                     const SizedBox(height: 20),
                     Expanded(
                       child: SingleChildScrollView(
                         controller: _scrollController,
                         child: const Text(
-                          '''Combined Policy – Maxryd Private Limited
+                          '''Combined Policy – ShipRyd Private Limited
 
-This Combined Policy includes the Terms of Service, Privacy Policy, and Refund & Cancellation Policy of Maxryd Private Limited. By registering on the Maxryd mobile application, website, or platform, and by clicking “I Agree”, you confirm that you have read, understood, and accepted all the terms and conditions mentioned below.
+This Combined Policy includes the Terms of Service, Privacy Policy, and Refund & Cancellation Policy of ShipRyd Private Limited. By registering on the ShipRyd mobile application, website, or platform, and by clicking “I Agree”, you confirm that you have read, understood, and accepted all the terms and conditions mentioned below.
 
 1. Company Details
-Legal Name: Maxryd Private Limited
+Legal Name: ShipRyd Private Limited
 CIN: U49231KA2026PTC213656
 Registered Address:
 H-1003, Near Hoodi Metro Station,
@@ -103,7 +104,7 @@ For high-speed electric scooters:
 Users must provide true and accurate information and comply with all applicable laws and traffic rules.
 
 3. Services Offered
-Maxryd provides electric scooter rental services for delivery partners, gig workers, and individuals. Service availability may vary by location.
+ShipRyd provides electric scooter rental services for delivery partners, gig workers, and individuals. Service availability may vary by location.
 
 4. User Responsibilities
 Users agree to use vehicles responsibly, follow traffic rules, avoid misuse or damage, bear responsibility for fines or penalties, and keep login credentials confidential.
@@ -119,22 +120,22 @@ Security Deposit:
 The security deposit will be refunded only if the rider completes a minimum of 2 months of active usage. If the rider does not complete 2 months, the security deposit will not be refunded. Refunds are subject to no pending dues, no major damages, and proper return of vehicle and accessories.
 
 7. Cancellation Policy
-Maxryd does not offer any cancellation policy. Once registration or vehicle allocation is completed, it cannot be cancelled.
+ShipRyd does not offer any cancellation policy. Once registration or vehicle allocation is completed, it cannot be cancelled.
 
 8. Privacy & Data Usage
-Maxryd may collect personal, KYC, payment, service usage, and technical data for service delivery, operations, compliance, and communication. Personal data is not sold.
+ShipRyd may collect personal, KYC, payment, service usage, and technical data for service delivery, operations, compliance, and communication. Personal data is not sold.
 
 9. Data Security & Retention
 Reasonable security measures are used to protect data. Data is retained only as required for legal or operational purposes.
 
 10. Limitation of Liability
-Maxryd is not liable for indirect losses, loss of income, or damages caused due to misuse, negligence, or rule violations.
+ShipRyd is not liable for indirect losses, loss of income, or damages caused due to misuse, negligence, or rule violations.
 
 11. Account Suspension & Termination
-Maxryd reserves the right to suspend or terminate accounts in case of false information, policy violations, unpaid dues, or misuse of vehicles.
+ShipRyd reserves the right to suspend or terminate accounts in case of false information, policy violations, unpaid dues, or misuse of vehicles.
 
 12. Policy Updates
-Maxryd may update this policy at any time. Continued use of the platform implies acceptance of the updated terms.
+ShipRyd may update this policy at any time. Continued use of the platform implies acceptance of the updated terms.
 
 13. Governing Law & Jurisdiction
 This policy is governed by the laws of India. Courts in Bangalore, Karnataka shall have exclusive jurisdiction.
@@ -184,7 +185,7 @@ By clicking “I Agree”, you confirm that you have read, understood, and accep
 
                                 final response = await http.put(
                                   Uri.parse(
-                                      'http://192.168.1.43:5008/api/driver/agreement'),
+                                      '${ApiConstants.baseUrl}/api/driver/agreement'),
                                   headers: {
                                     'Content-Type': 'application/json',
                                     'Accept': 'application/json',

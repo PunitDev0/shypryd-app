@@ -1,9 +1,9 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
-import 'package:Maxryd_app/features/auth/presentation/bloc/auth_state.dart';
-import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
-import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
-import 'package:Maxryd_app/features/onboarding/presentation/pages/onboarding_screen.dart';
+import 'package:ShipRyd_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:ShipRyd_app/features/home/presentation/pages/home_page.dart';
+import 'package:ShipRyd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
+import 'package:ShipRyd_app/features/onboarding/presentation/pages/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFf5c034),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) async {
           if (state is AuthPhoneSent) {
@@ -130,11 +130,11 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       const SizedBox(height: 100), // Top spacing for status bar
                       const Text(
-                        'MaxRyd',
+                        'ShipRyd',
                         style: TextStyle(
                           fontSize: 52, // Slightly smaller for responsiveness
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black,
                           fontStyle: FontStyle.italic,
                         ),
                       ),
@@ -148,10 +148,10 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Text(
+                      const Text(
                         'Welcome back! Please login to continue.',
                         style: TextStyle(
-                          color: Colors.grey[500],
+                          color: Colors.black,
                           fontSize: 16,
                         ),
                         textAlign: TextAlign.center,
@@ -191,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(
-                                  color: Colors.red,
+                                  color: Colors.black,
                                   width: 1.5,
                                 ),
                               ),
@@ -254,7 +254,7 @@ class _LoginPageState extends State<LoginPage> {
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(
-                                  color: Colors.red,
+                                  color: Colors.black,
                                   width: 1.5,
                                 ),
                               ),
@@ -293,7 +293,7 @@ class _LoginPageState extends State<LoginPage> {
                               errorBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                                 borderSide: const BorderSide(
-                                  color: Colors.red,
+                                  color: Colors.black,
                                   width: 1.5,
                                 ),
                               ),
@@ -336,7 +336,7 @@ class _LoginPageState extends State<LoginPage> {
                                         }
                                       },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFf5c034),
+                                  backgroundColor: Colors.black,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -347,7 +347,7 @@ class _LoginPageState extends State<LoginPage> {
                                     : Text(
                                         _isOtpMode ? 'Verify OTP' : 'Send OTP',
                                         style: const TextStyle(
-                                          color: Colors.black,
+                                          color: Color(0xFFf5c034),
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -370,7 +370,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ? "Didn't receive the code? Resend in $_resendTimer s"
                                 : "Didn't receive the code? Resend",
                             style: TextStyle(
-                              color: Colors.grey[500],
+                              color: Colors.black.withOpacity(0.6)[500],
                               fontSize: 14,
                               decoration: _resendTimer > 0
                                   ? null
@@ -385,7 +385,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             'By continuing, you agree to our Terms of Service and Privacy Policy.',
                             style: TextStyle(
-                              color: Colors.grey[500],
+                              color: Colors.black.withOpacity(0.6)[500],
                               fontSize: 12,
                             ),
                             textAlign: TextAlign.center,

@@ -1,14 +1,15 @@
+import "package:ShipRyd_app/core/constants/api_constants.dart";
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:Maxryd_app/core/error/exceptions.dart';
-import 'package:Maxryd_app/features/driver/data/models/driver_profile_model.dart';
+import 'package:ShipRyd_app/core/error/exceptions.dart';
+import 'package:ShipRyd_app/features/driver/data/models/driver_profile_model.dart';
 
 abstract class DriverRemoteDataSource {
   Future<DriverProfileModel> fetchDriverProfile(String token);
 }
 
 class DriverRemoteDataSourceImpl implements DriverRemoteDataSource {
-  static const String baseUrl = 'http://192.168.1.43:5008';
+  static const String baseUrl = '${ApiConstants.baseUrl}';
 
   @override
   Future<DriverProfileModel> fetchDriverProfile(String token) async {

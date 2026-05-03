@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:Maxryd_app/core/error/exceptions.dart';
-import 'package:Maxryd_app/core/error/failures.dart';
-import 'package:Maxryd_app/features/auth/data/models/auth_response.dart';
-import 'package:Maxryd_app/features/auth/domain/usescases/phone_otp_params.dart';
+import 'package:ShipRyd_app/core/error/exceptions.dart';
+import 'package:ShipRyd_app/core/error/failures.dart';
+import 'package:ShipRyd_app/features/auth/data/models/auth_response.dart';
+import 'package:ShipRyd_app/features/auth/domain/usescases/phone_otp_params.dart';
 import 'package:dartz/dartz.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_local_datasource.dart';

@@ -1,10 +1,10 @@
-import 'package:Maxryd_app/core/utils/token_storage.dart';
-import 'package:Maxryd_app/features/auth/data/models/auth_response.dart';
-import 'package:Maxryd_app/features/auth/domain/entities/user.dart';
-import 'package:Maxryd_app/features/auth/domain/usescases/login_with_phone.dart';
-import 'package:Maxryd_app/features/auth/domain/usescases/phone_otp_params.dart';
-import 'package:Maxryd_app/features/auth/domain/usescases/verify_otp.dart';
-import 'package:Maxryd_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:ShipRyd_app/core/utils/token_storage.dart';
+import 'package:ShipRyd_app/features/auth/data/models/auth_response.dart';
+import 'package:ShipRyd_app/features/auth/domain/entities/user.dart';
+import 'package:ShipRyd_app/features/auth/domain/usescases/login_with_phone.dart';
+import 'package:ShipRyd_app/features/auth/domain/usescases/phone_otp_params.dart';
+import 'package:ShipRyd_app/features/auth/domain/usescases/verify_otp.dart';
+import 'package:ShipRyd_app/features/auth/presentation/bloc/auth_state.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
