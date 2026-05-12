@@ -9,29 +9,65 @@ class DriverProfileScreen extends StatelessWidget {
     required this.driverProfile,
   });
 
-  static const yellow = Color(0xFFFFD700);
+  static const yellow = Color(0xFFf5c034);
+  static const darkBg = Colors.black;
+  static const darkCard = Color(0xFF1E1E1E);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: darkBg,
       appBar: AppBar(
-        backgroundColor: yellow,
+        backgroundColor: darkBg,
         elevation: 0,
         centerTitle: true,
-        leading: const BackButton(color: Colors.black),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: yellow),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
           "Driver Profile",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(
           children: [
+            // Profile Header with Avatar (Visual improvement)
+            const SizedBox(height: 10),
+            Center(
+              child: Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: yellow.withOpacity(0.3), width: 2),
+                    ),
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: darkCard,
+                      child: const Icon(Icons.person, size: 50, color: Colors.white),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: const BoxDecoration(color: yellow, shape: BoxShape.circle),
+                      child: const Icon(Icons.camera_alt_rounded, size: 18, color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+
             // Personal Details
             _sectionCard(
-              icon: Icons.person,
+              icon: Icons.person_rounded,
               title: "Personal Details",
               children: [
                 _ProfileRow(label: "Name", value: driverProfile.personalInformation?.fullName ?? "Not provided"),
@@ -51,11 +87,11 @@ class DriverProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Document Details
             _sectionCard(
-              icon: Icons.description,
+              icon: Icons.description_rounded,
               title: "Document Details",
               children: [
                 _ProfileRow(
@@ -74,11 +110,11 @@ class DriverProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             // Bank Details
             _sectionCard(
-              icon: Icons.account_balance,
+              icon: Icons.account_balance_rounded,
               title: "Bank Details",
               children: [
                 _ProfileRow(
@@ -95,11 +131,11 @@ class DriverProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // Status & Other Info
             _sectionCard(
-              icon: Icons.info,
+              icon: Icons.info_rounded,
               title: "Account Status",
               children: [
                 _ProfileRow(label: "Status", value: driverProfile.status),
@@ -110,10 +146,10 @@ class DriverProfileScreen extends StatelessWidget {
                 _ProfileRow(label: "Wallet Balance", value: "₹${driverProfile.walletBalance}"),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 35),
 
             _logoutButton(),
-            const SizedBox(height: 24),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -127,38 +163,32 @@ class DriverProfileScreen extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        color: darkCard,
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.white.withOpacity(0.03)),
       ),
       child: Column(
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: yellow.withOpacity(0.25),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              color: yellow.withOpacity(0.05),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(25)),
             ),
             child: Row(
               children: [
-                Icon(icon, size: 22),
-                const SizedBox(width: 8),
+                Icon(icon, size: 20, color: yellow),
+                const SizedBox(width: 12),
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Colors.white),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Column(children: children),
           ),
         ],
@@ -166,23 +196,25 @@ class DriverProfileScreen extends StatelessWidget {
     );
   }
 
-  static Widget _logoutButton() {
+  Widget _logoutButton() {
     return SizedBox(
       width: double.infinity,
-      height: 54,
+      height: 60,
       child: ElevatedButton.icon(
         onPressed: () {
-          // TODO: Implement logout (clear token, navigate to login)
+          // TODO: Implement logout
         },
-        icon: const Icon(Icons.logout),
+        icon: const Icon(Icons.logout_rounded),
         label: const Text(
-          "Logout",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          "Logout Account",
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.deepOrange,
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          backgroundColor: Colors.redAccent.withOpacity(0.1),
+          foregroundColor: Colors.redAccent,
+          elevation: 0,
+          side: const BorderSide(color: Colors.redAccent, width: 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         ),
       ),
     );
@@ -205,7 +237,6 @@ class DriverProfileScreen extends StatelessWidget {
   }
 }
 
-/// Reusable Profile Row
 class _ProfileRow extends StatelessWidget {
   final String label;
   final String value;
@@ -220,7 +251,7 @@ class _ProfileRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 18),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -230,21 +261,22 @@ class _ProfileRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 13, color: Colors.grey),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600], fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   value,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
               ],
             ),
           ),
           if (showCopy)
-            Icon(
-              Icons.copy,
-              size: 18,
-              color: Colors.grey.shade600,
+            IconButton(
+              icon: Icon(Icons.copy_rounded, size: 18, color: Colors.white.withOpacity(0.2)),
+              onPressed: () {},
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
             ),
         ],
       ),

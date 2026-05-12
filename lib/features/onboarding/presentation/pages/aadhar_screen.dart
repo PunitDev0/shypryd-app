@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:Maxryd_app/core/constants/api_constants.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:Maxryd_app/features/onboarding/data/repositories/aadhar_repository.dart';
 import 'package:Maxryd_app/features/onboarding/presentation/bloc/aadhar/aadhar_bloc.dart';
@@ -31,7 +32,7 @@ class AadharVerificationScreen extends StatelessWidget {
       return null;
     }
     print('Uploading image: $imagePath');
-    final url = Uri.parse('http://192.168.1.43:5008/api/upload/image');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/upload/image');
     final request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = 'Bearer $token';
     final file = File(imagePath);
@@ -96,7 +97,7 @@ class AadharVerificationScreen extends StatelessWidget {
       "aadhaarFrontImage": frontImageUrl,
       "aadhaarBackImage": backImageUrl,
     };
-    final url = Uri.parse('http://192.168.1.43:5008/api/driver/aadhaar');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/driver/aadhaar');
     final response = await http.put(
       url,
       headers: {

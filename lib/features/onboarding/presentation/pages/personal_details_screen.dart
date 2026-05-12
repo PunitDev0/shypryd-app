@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
+import 'package:Maxryd_app/core/constants/api_constants.dart';
 
 import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
         }
       }
     };
-    final url = Uri.parse('http://192.168.1.43:5008/api/driver/personal-info');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/driver/personal-info');
     final response = await http.put(
       url,
       headers: {

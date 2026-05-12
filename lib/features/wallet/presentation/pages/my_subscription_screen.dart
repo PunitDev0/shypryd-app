@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:Maxryd_app/core/constants/api_constants.dart';
 import 'package:Maxryd_app/features/wallet/presentation/pages/payment_method_screen.dart';
 
 class MySubscriptionScreen extends StatefulWidget {
@@ -19,6 +20,10 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
   List<Map<String, dynamic>> plans = [];
   final _storage = const FlutterSecureStorage();
 
+  static const yellow = Color(0xFFf5c034);
+  static const darkBg = Colors.black;
+  static const darkCard = Color(0xFF1E1E1E);
+
   @override
   void initState() {
     super.initState();
@@ -31,20 +36,15 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
       errorMessage = null;
     });
 
-    print('=== Fetching subscription plans ===');
-
     try {
       final token = await _storage.read(key: 'auth_token');
-      print(
-          'Token retrieved: ${token != null ? token.substring(0, 20) + "..." : "NULL - no token"}');
+      final driverId = await _storage.read(key: 'driverId');
 
       if (token == null) {
-        print('ERROR: No auth token found in secure storage');
         throw Exception('No auth token found. Please login again.');
       }
 
-      final url = Uri.parse('http://192.168.1.43:5008/api/subscription/plans');
-      print('API URL: $url');
+      final url = Uri.parse('${ApiConstants.baseUrl}/api/subscription/plans${driverId != null ? "?driverId=$driverId" : ""}');
 
       final response = await http.get(
         url,
@@ -54,46 +54,25 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
         },
       );
 
-      print('Response Status Code: ${response.statusCode}');
-      print('Response Headers: ${response.headers}');
-      print('Raw Response Body: ${response.body}');
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('Parsed JSON success: ${data['success']}');
 
         if (data['success'] == true) {
-          final fetchedPlans = List<Map<String, dynamic>>.from(data['plans']);
-          print('Number of plans received: ${fetchedPlans.length}');
-          print('Plans data: $fetchedPlans');
-
           setState(() {
-            plans = fetchedPlans;
+            plans = List<Map<String, dynamic>>.from(data['plans']);
             isLoading = false;
           });
         } else {
-          final msg = data['message'] ?? 'API returned success=false';
-          print('API Error Message: $msg');
-          throw Exception(msg);
+          throw Exception(data['message'] ?? 'API error');
         }
-      } else if (response.statusCode == 401) {
-        print('401 Unauthorized - Token likely invalid/expired');
-        throw Exception('Session expired. Please login again.');
       } else {
-        print('Non-200 status: ${response.statusCode}');
-        throw Exception(
-            'Failed to load plans: ${response.statusCode} - ${response.body}');
+        throw Exception('Failed to load plans');
       }
-    } catch (e, stack) {
-      print('EXCEPTION in _fetchPlans: $e');
-      print('Stack trace: $stack');
-
+    } catch (e) {
       setState(() {
         errorMessage = e.toString().replaceFirst('Exception: ', '');
         isLoading = false;
       });
-    } finally {
-      print('=== Fetch plans finished ===');
     }
   }
 
@@ -108,46 +87,48 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const yellow = Color(0xFFFFD600);
-
-    final selectedPlan =
-        selectedPlanIndex >= 0 && selectedPlanIndex < plans.length
-            ? plans[selectedPlanIndex]
-            : null;
+    final selectedPlan = selectedPlanIndex >= 0 && selectedPlanIndex < plans.length ? plans[selectedPlanIndex] : null;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: darkBg,
       appBar: AppBar(
-        backgroundColor: yellow,
+        backgroundColor: darkBg,
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: yellow),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
           'Choose Your Plan',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator(color: yellow))
           : errorMessage != null
               ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Error: $errorMessage',
-                          style:
-                              const TextStyle(color: Colors.red, fontSize: 16),
-                          textAlign: TextAlign.center),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _fetchPlans,
-                        child: const Text('Retry'),
-                      ),
-                    ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(40.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 60),
+                        const SizedBox(height: 20),
+                        Text('Error: $errorMessage',
+                            style: const TextStyle(color: Colors.white70, fontSize: 16), textAlign: TextAlign.center),
+                        const SizedBox(height: 30),
+                        ElevatedButton(
+                          onPressed: _fetchPlans,
+                          style: ElevatedButton.styleFrom(backgroundColor: yellow, foregroundColor: Colors.black),
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -156,144 +137,139 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                         final isSelected = selectedPlanIndex == index;
 
                         return GestureDetector(
-                          onTap: () {
-                            setState(() => selectedPlanIndex = index);
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(bottom: 16),
-                            padding: const EdgeInsets.all(18),
+                          onTap: () => setState(() => selectedPlanIndex = index),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.only(bottom: 20),
+                            padding: const EdgeInsets.all(25),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
+                              color: darkCard,
+                              borderRadius: BorderRadius.circular(30),
                               border: Border.all(
-                                color:
-                                    isSelected ? yellow : Colors.grey.shade300,
-                                width: 1.5,
+                                color: isSelected ? yellow : Colors.white.withOpacity(0.05),
+                                width: 2,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                )
-                              ],
+                              boxShadow: isSelected
+                                  ? [BoxShadow(color: yellow.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 5))]
+                                  : [],
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       plan['name'] as String,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.white),
                                     ),
-                                    if (isSelected)
-                                      const Icon(Icons.check_circle,
-                                          color: yellow),
+                                    if (isSelected) const Icon(Icons.check_circle_rounded, color: yellow, size: 28),
                                   ],
                                 ),
-                                const SizedBox(height: 14),
-                                RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: '₹${plan['basePrice']}',
-                                        style: const TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
+                                const SizedBox(height: 15),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '₹${plan['basePrice']}',
+                                      style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 6, left: 4),
+                                      child: Text(
+                                        plan['duration'] != null ? '/ ${plan['duration']}' : '',
+                                        style: TextStyle(fontSize: 16, color: Colors.grey[600], fontWeight: FontWeight.w600),
                                       ),
-                                      TextSpan(
-                                        text: plan['duration'] != null
-                                            ? ' / ${plan['duration']}'
-                                            : '',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.black54,
-                                        ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  plan['description'] as String? ?? '',
+                                  style: TextStyle(fontSize: 14, color: Colors.grey[500], height: 1.4),
+                                ),
+                                const SizedBox(height: 20),
+                                Container(
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.03),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      _PlanDetailRow(
+                                        label: 'First time total',
+                                        value: '₹${plan['firstTimePrice']}',
+                                        color: Colors.greenAccent,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      _PlanDetailRow(
+                                        label: 'Renewal Price',
+                                        value: '₹${plan['renewalPrice']}',
+                                        color: Colors.white70,
                                       ),
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  plan['description'] as String? ?? '',
-                                  style: const TextStyle(
-                                      fontSize: 14, color: Colors.black54),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'First time total: ₹${plan['firstTimePrice']}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.green,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Text(
-                                  'Renewal: ₹${plan['renewalPrice']}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                const Divider(),
-                                const Text(
-                                  'Rules:',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15),
-                                ),
-                                const SizedBox(height: 6),
+                                const SizedBox(height: 20),
+                                const Text('Plan Benefits:',
+                                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Colors.white)),
+                                const SizedBox(height: 12),
                                 ...[
                                   "2 swaps/day - 3rd or more swaps ₹65/swap",
                                   "Regular maintenance included",
                                   "Damage caused by driver will be charged",
-                                ].map(
-                                  (r) => Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 2),
-                                    child: Text("• $r",
-                                        style: const TextStyle(fontSize: 14)),
-                                  ),
-                                ),
+                                ].map((r) => Padding(
+                                      padding: const EdgeInsets.only(bottom: 6),
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.bolt_rounded, color: yellow, size: 14),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(r, style: TextStyle(fontSize: 13, color: Colors.grey[400])),
+                                          ),
+                                        ],
+                                      ),
+                                    )),
                               ],
                             ),
                           ),
                         );
                       }),
-                      const SizedBox(height: 28),
-                      const Text(
-                        'Pricing Breakdown',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                      const SizedBox(height: 20),
+                      const Text('Pricing Breakdown',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white)),
+                      const SizedBox(height: 15),
+                      Container(
+                        padding: const EdgeInsets.all(25),
+                        decoration: BoxDecoration(
+                          color: darkCard,
+                          borderRadius: BorderRadius.circular(25),
+                          border: Border.all(color: Colors.white.withOpacity(0.05)),
+                        ),
+                        child: Column(
+                          children: [
+                            _priceRow('Plan Price', _selectedPlanPrice),
+                            const SizedBox(height: 12),
+                            _priceRow('Security Deposit', _deposit),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: Divider(color: Colors.white.withOpacity(0.05)),
+                            ),
+                            _priceRow('Total Amount', _total, isBold: true),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 12),
-                      if (selectedPlan != null) ...[
-                        _priceRow('Plan Price', _selectedPlanPrice),
-                        _priceRow(
-                            'One-Time Security Deposit (Refundable)', _deposit),
-                        const Divider(height: 32),
-                        _priceRow('Total Amount (First Time)', _total,
-                            isBold: true),
-                      ] else ...[
-                        _priceRow('One-Time Security Deposit', _deposit),
-                        const Divider(height: 32),
-                        _priceRow('Total Amount', _deposit, isBold: true),
-                      ],
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 35),
+        decoration: BoxDecoration(
+          color: darkBg,
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 20)],
+        ),
         child: SafeArea(
           child: ElevatedButton(
             onPressed: selectedPlanIndex >= 0
@@ -313,7 +289,7 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                               "Damage caused by driver will be charged",
                             ],
                           },
-                          selectedPickupTime: 'N/A', // Removed pickup time
+                          selectedPickupTime: 'N/A',
                           totalAmount: _total,
                         ),
                       ),
@@ -321,19 +297,18 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
                   }
                 : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: selectedPlanIndex >= 0
-                  ? const Color(0xFFFFD600)
-                  : Colors.grey.shade300,
+              backgroundColor: yellow,
               foregroundColor: Colors.black,
-              minimumSize: const Size(double.infinity, 56),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              disabledBackgroundColor: Colors.grey.shade300,
-              disabledForegroundColor: Colors.black,
+              minimumSize: const Size(double.infinity, 65),
+              elevation: 8,
+              shadowColor: yellow.withOpacity(0.3),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              disabledBackgroundColor: Colors.white.withOpacity(0.05),
+              disabledForegroundColor: Colors.grey[700],
             ),
             child: Text(
               selectedPlanIndex >= 0 ? 'Proceed - ₹$_total' : 'Select a Plan',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
             ),
           ),
         ),
@@ -342,25 +317,45 @@ class _MySubscriptionScreenState extends State<MySubscriptionScreen> {
   }
 
   Widget _priceRow(String label, int amount, {bool isBold = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
-            ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: isBold ? Colors.white : Colors.grey[500],
+            fontWeight: isBold ? FontWeight.w900 : FontWeight.w600,
+            fontSize: isBold ? 16 : 14,
           ),
-          Text(
-            '₹$amount',
-            style: TextStyle(
-              fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
-            ),
+        ),
+        Text(
+          '₹$amount',
+          style: TextStyle(
+            color: isBold ? yellow : Colors.white,
+            fontWeight: isBold ? FontWeight.w900 : FontWeight.w700,
+            fontSize: isBold ? 20 : 16,
           ),
-        ],
-      ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlanDetailRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color color;
+
+  const _PlanDetailRow({required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w600)),
+        Text(value, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: color)),
+      ],
     );
   }
 }

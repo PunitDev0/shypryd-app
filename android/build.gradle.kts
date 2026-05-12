@@ -19,7 +19,7 @@ allprojects {
 
 // === YOUR CUSTOM BUILD DIR LOGIC ===
 val newBuildDir: Directory = rootProject.layout.buildDirectory
-    .dir("../../build")
+    .dir("/Users/punitnigam/shypryd_app_build")
     .get()
 rootProject.layout.buildDirectory.value(newBuildDir)
 

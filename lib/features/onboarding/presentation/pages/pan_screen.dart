@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:Maxryd_app/core/constants/api_constants.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -33,7 +34,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
       return null;
     }
     print('Uploading PAN image: $imagePath');
-    final url = Uri.parse('http://192.168.1.43:5008/api/upload/image');
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/upload/image');
     final request = http.MultipartRequest('POST', url);
     String mimeType = 'image/jpeg';
     if (imagePath.toLowerCase().endsWith('.png')) mimeType = 'image/png';
@@ -111,7 +112,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
       return;
     }
     final response = await http.put(
-      Uri.parse('http://192.168.1.43:5008/api/driver/pan'),
+      Uri.parse('${ApiConstants.baseUrl}/api/driver/pan'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

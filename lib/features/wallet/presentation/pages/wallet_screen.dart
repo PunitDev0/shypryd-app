@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:Maxryd_app/core/constants/api_constants.dart';
 import 'package:Maxryd_app/features/driver/domain/entities/driver_profile.dart';
+import 'package:Maxryd_app/features/wallet/presentation/pages/my_subscription_screen.dart';
 
 class WalletScreen extends StatefulWidget {
   final DriverProfile? driverProfile;
@@ -17,6 +19,10 @@ class _WalletScreenState extends State<WalletScreen> {
   bool _isLoadingHistory = true;
   List<dynamic> _subscriptions = [];
   String? _error;
+
+  static const yellow = Color(0xFFf5c034);
+  static const darkBg = Colors.black;
+  static const darkCard = Color(0xFF1E1E1E);
 
   @override
   void initState() {
@@ -40,7 +46,7 @@ class _WalletScreenState extends State<WalletScreen> {
       }
 
       final response = await http.get(
-        Uri.parse('http://192.168.1.43:5008/api/subscription/driver/$driverId'),
+        Uri.parse('${ApiConstants.baseUrl}/api/subscription/driver/$driverId'),
         headers: {
           'Authorization': 'Bearer $token',
         },
@@ -69,123 +75,271 @@ class _WalletScreenState extends State<WalletScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const yellow = Color(0xFFFFD600);
     final activeSub = widget.driverProfile?.activeSubscription;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB),
+      backgroundColor: darkBg,
       appBar: AppBar(
-        backgroundColor: yellow,
+        backgroundColor: darkBg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: yellow),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "My Wallet",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.black),
+            icon: const Icon(Icons.refresh_rounded, color: yellow),
             onPressed: _fetchSubscriptionHistory,
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Balance Card
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    const Text(
-                      "WALLET BALANCE",
-                      style: TextStyle(
-                        color: Colors.white60,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      "₹${widget.driverProfile?.walletBalance ?? 0}",
-                      style: const TextStyle(
-                        color: yellow,
-                        fontSize: 42,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _WalletActionBtn(
-                          icon: Icons.add_circle_outline,
-                          label: "Add Money",
-                          onTap: () {},
-                        ),
-                        const SizedBox(width: 40),
-                        _WalletActionBtn(
-                          icon: Icons.history,
-                          label: "History",
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Text(
-                "Current Subscription",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-
-            // Subscription Card
-            if (activeSub != null)
+      body: RefreshIndicator(
+        onRefresh: _fetchSubscriptionHistory,
+        color: yellow,
+        backgroundColor: darkCard,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Balance Card (Premium)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(20),
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(30),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.grey.shade200),
+                    gradient: LinearGradient(
+                      colors: [darkCard, Colors.black],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(35),
+                    border: Border.all(color: Colors.white.withOpacity(0.05)),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 20, offset: const Offset(0, 10)),
+                    ],
                   ),
                   child: Column(
                     children: [
+                      Text(
+                        "WALLET BALANCE",
+                        style: TextStyle(
+                          color: yellow.withOpacity(0.6),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      Text(
+                        "₹${widget.driverProfile?.walletBalance ?? 0}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 45,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _WalletActionBtn(
+                            icon: Icons.add_circle_rounded,
+                            label: "Top Up",
+                            onTap: () {},
+                            yellow: yellow,
+                          ),
+                          const SizedBox(width: 50),
+                          _WalletActionBtn(
+                            icon: Icons.history_rounded,
+                            label: "Statement",
+                            onTap: () {},
+                            yellow: yellow,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                child: Text(
+                  "Current Subscription",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white),
+                ),
+              ),
+
+              // Subscription Card
+              if (activeSub != null)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(
+                    padding: const EdgeInsets.all(25),
+                    decoration: BoxDecoration(
+                      color: darkCard,
+                      borderRadius: BorderRadius.circular(35),
+                      border: Border.all(color: Colors.white.withOpacity(0.05)),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: yellow.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: const Icon(Icons.electric_scooter_rounded, color: yellow, size: 28),
+                            ),
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "${activeSub.plan?.toUpperCase()} Plan",
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Valid until ${DateFormat('dd MMM yyyy').format(DateTime.tryParse(activeSub.endDate!) ?? DateTime.now())}",
+                                    style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.greenAccent.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Text(
+                                "ACTIVE",
+                                style: TextStyle(color: Colors.greenAccent, fontSize: 10, fontWeight: FontWeight.w900),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          child: Divider(color: Colors.white.withOpacity(0.05)),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Plan Amount", style: TextStyle(color: Colors.grey[500], fontWeight: FontWeight.w600)),
+                            Text("₹${activeSub.totalAmount}", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white)),
+                          ],
+                        ),
+                        const SizedBox(height: 25),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {},
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                  backgroundColor: Colors.white.withOpacity(0.05),
+                                ),
+                                child: const Text("Details", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const MySubscriptionScreen()),
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: yellow,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                                ),
+                                child: const Text("Renew Plan", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(30),
+                    decoration: BoxDecoration(
+                      color: darkCard,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.white.withOpacity(0.05)),
+                    ),
+                    child: const Center(
+                      child: Text("No active subscription", style: TextStyle(color: Colors.grey)),
+                    ),
+                  ),
+                ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(25, 35, 25, 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Recent Activity", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white)),
+                    TextButton(
+                      onPressed: () {},
+                      child: const Text("See All", style: TextStyle(color: yellow, fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ),
+
+              if (_isLoadingHistory)
+                const Center(child: Padding(padding: EdgeInsets.all(40), child: CircularProgressIndicator(color: yellow)))
+              else if (_error != null)
+                Center(child: Padding(padding: const EdgeInsets.all(40), child: Text(_error!, style: const TextStyle(color: Colors.redAccent))))
+              else
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: _subscriptions.length,
+                  itemBuilder: (context, index) {
+                    final sub = _subscriptions[index];
+                    final date = DateTime.tryParse(sub['createdAt']) ?? DateTime.now();
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: darkCard,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.white.withOpacity(0.03)),
+                      ),
+                      child: Row(
                         children: [
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: yellow.withOpacity(0.1),
+                              color: Colors.redAccent.withOpacity(0.1),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.electric_scooter, color: Colors.black, size: 24),
+                            child: const Icon(Icons.arrow_upward_rounded, color: Colors.redAccent, size: 20),
                           ),
                           const SizedBox(width: 15),
                           Expanded(
@@ -193,148 +347,29 @@ class _WalletScreenState extends State<WalletScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "${activeSub.plan?.toUpperCase()} Plan",
-                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                  "${sub['plan'].toString().toUpperCase()} Plan",
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                 ),
+                                const SizedBox(height: 2),
                                 Text(
-                                  "Valid until ${DateFormat('dd MMM yyyy').format(DateTime.tryParse(activeSub.endDate!) ?? DateTime.now())}",
-                                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                  DateFormat('dd MMM yyyy, hh:mm a').format(date),
+                                  style: TextStyle(color: Colors.grey[600], fontSize: 11),
                                 ),
                               ],
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: Colors.green.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Text(
-                              "ACTIVE",
-                              style: TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold),
-                            ),
+                          Text(
+                            "- ₹${sub['totalAmount']}",
+                            style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w900, fontSize: 16),
                           ),
                         ],
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Divider(),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Plan Amount", style: TextStyle(color: Colors.grey[600])),
-                          Text("₹${activeSub.totalAmount}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () {},
-                              style: OutlinedButton.styleFrom(
-                                side: BorderSide(color: Colors.grey.shade300),
-                                padding: const EdgeInsets.symmetric(vertical: 15),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              ),
-                              child: const Text("Details", style: TextStyle(color: Colors.black)),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: yellow,
-                                elevation: 0,
-                                padding: const EdgeInsets.symmetric(vertical: 15),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              ),
-                              child: const Text("Renew / Change", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-              )
-            else
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Center(child: Text("No active subscription")),
-              ),
-
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 30, 20, 15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text("Recent Activity", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  TextButton(onPressed: () {}, child: const Text("See All", style: TextStyle(color: Colors.blue))),
-                ],
-              ),
-            ),
-
-            if (_isLoadingHistory)
-              const Center(child: CircularProgressIndicator())
-            else if (_error != null)
-              Center(child: Text(_error!))
-            else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: _subscriptions.length,
-                itemBuilder: (context, index) {
-                  final sub = _subscriptions[index];
-                  final date = DateTime.tryParse(sub['createdAt']) ?? DateTime.now();
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade100),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.arrow_upward, color: Colors.red, size: 20),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${sub['plan'].toString().toUpperCase()} Plan Purchase",
-                                style: const TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                DateFormat('dd MMM yyyy, hh:mm a').format(date),
-                                style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          "- ₹${sub['totalAmount']}",
-                          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            const SizedBox(height: 30),
-          ],
+              const SizedBox(height: 50),
+            ],
+          ),
         ),
       ),
     );
@@ -345,18 +380,26 @@ class _WalletActionBtn extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final Color yellow;
 
-  const _WalletActionBtn({required this.icon, required this.label, required this.onTap});
+  const _WalletActionBtn({required this.icon, required this.label, required this.onTap, required this.yellow});
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
       child: Column(
         children: [
-          Icon(icon, color: Colors.white, size: 28),
-          const SizedBox(height: 6),
-          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Icon(icon, color: yellow, size: 28),
+          ),
+          const SizedBox(height: 10),
+          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
     );

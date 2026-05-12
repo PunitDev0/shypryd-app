@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart'; // ← New import
-import 'raise_ticket_screen.dart'; // Your existing import
+import 'package:url_launcher/url_launcher.dart';
+import 'raise_ticket_screen.dart';
 
 class HelpCenterScreen extends StatelessWidget {
   const HelpCenterScreen({super.key});
 
-  static const Color yellow = Color(0xFFFFD600);
+  static const Color yellow = Color(0xFFf5c034);
+  static const Color darkBg = Colors.black;
+  static const Color darkCard = Color(0xFF1E1E1E);
 
   // Helpline numbers
   final String number1 = '7339966643';
@@ -18,66 +20,50 @@ class HelpCenterScreen extends StatelessWidget {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
-      print('Launch error: $e');
+      debugPrint('Launch error: $e');
     }
   }
 
   void _showHelplineBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: darkCard,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
       builder: (context) => Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(25.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 40,
               height: 4,
-              margin: const EdgeInsets.only(bottom: 16),
+              margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
-                color: Colors.grey[400],
+                color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const Text(
               'Call Helpline',
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
               ),
             ),
-            const SizedBox(height: 24),
-            ListTile(
-              leading: const Icon(Icons.phone, color: yellow),
-              title: Text(number1,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w600)),
-              onTap: () {
-                _callNumber(number1);
-                Navigator.pop(context);
-              },
-              tileColor: Colors.grey[100],
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            const SizedBox(height: 12),
-            ListTile(
-              leading: const Icon(Icons.phone, color: yellow),
-              title: Text(number2,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w600)),
-              onTap: () {
-                _callNumber(number2);
-                Navigator.pop(context);
-              },
-              tileColor: Colors.grey[100],
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
+            _HelplineTile(number: number1, yellow: yellow, onTap: () {
+              _callNumber(number1);
+              Navigator.pop(context);
+            }),
+            const SizedBox(height: 15),
+            _HelplineTile(number: number2, yellow: yellow, onTap: () {
+              _callNumber(number2);
+              Navigator.pop(context);
+            }),
+            const SizedBox(height: 30),
           ],
         ),
       ),
@@ -87,91 +73,91 @@ class HelpCenterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: darkBg,
       body: Column(
         children: [
-          // Yellow Header
-          Stack(
-            children: [
-              Container(
-                height: 220,
-                width: double.infinity,
-                color: yellow,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_ios, size: 20),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'How can we help\nyou today?',
-                      style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        height: 1.2,
-                      ),
-                    ),
-                    const Spacer(),
-                    const Center(
-                      child: Text(
-                        'Help Center',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+          // Premium Curved Header
+          Container(
+            height: 240,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.black, Color(0xFF1A1A1A)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
-              // Decorative circle
-              Positioned(
-                right: -50,
-                top: -50,
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(50),
+                bottomRight: Radius.circular(50),
               ),
-            ],
-          ),
-
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            ),
+            padding: const EdgeInsets.fromLTRB(25, 60, 25, 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Search Bar
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(15),
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, color: yellow, size: 24),
+                  onPressed: () => Navigator.pop(context),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+                const SizedBox(height: 25),
+                const Text(
+                  'How can we help\nyou today?',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    height: 1.2,
                   ),
-                  child: const TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search for issues...',
-                      border: InputBorder.none,
-                      icon: Icon(Icons.search, color: Colors.grey),
+                ),
+                const Spacer(),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Text(
+                    'SUPPORT HUB',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      color: yellow.withOpacity(0.5),
+                      letterSpacing: 4,
                     ),
                   ),
                 ),
-                const SizedBox(height: 30),
+              ],
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Premium Search Bar
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: darkCard,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  ),
+                  child: const TextField(
+                    style: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      hintText: 'Search for issues...',
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                      border: InputBorder.none,
+                      icon: Icon(Icons.search_rounded, color: yellow, size: 22),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 35),
                 const Text(
                   'Support Categories',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
                   ),
                 ),
               ],
@@ -182,55 +168,48 @@ class HelpCenterScreen extends StatelessWidget {
             child: GridView.count(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               crossAxisCount: 2,
-              mainAxisSpacing: 20,
-              crossAxisSpacing: 20,
-              childAspectRatio: 0.9,
+              mainAxisSpacing: 15,
+              crossAxisSpacing: 15,
+              childAspectRatio: 1.1,
               children: [
                 _HelpTile(
-                  icon: Icons.support_agent,
-                  iconColor: Colors.blue,
-                  iconBgColor: const Color(0xFFE3F2FD),
+                  icon: Icons.support_agent_rounded,
+                  color: Colors.blueAccent,
                   title: 'Raise Ticket',
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => const RaiseTicketScreen()),
+                      MaterialPageRoute(builder: (_) => const RaiseTicketScreen()),
                     );
                   },
                 ),
                 _HelpTile(
-                  icon: Icons.receipt_long,
-                  iconColor: Colors.purple,
-                  iconBgColor: const Color(0xFFF3E5F5),
+                  icon: Icons.receipt_long_rounded,
+                  color: Colors.purpleAccent,
                   title: 'My Tickets',
                   onTap: () {},
                 ),
                 _HelpTile(
-                  icon: Icons.phone_in_talk,
-                  iconColor: Colors.orange,
-                  iconBgColor: const Color(0xFFFFF3E0),
+                  icon: Icons.phone_in_talk_rounded,
+                  color: yellow,
                   title: 'Helpline',
                   onTap: () => _showHelplineBottomSheet(context),
                 ),
                 _HelpTile(
-                  icon: Icons.play_lesson,
-                  iconColor: Colors.green,
-                  iconBgColor: const Color(0xFFE8F5E9),
+                  icon: Icons.play_lesson_rounded,
+                  color: Colors.greenAccent,
                   title: 'Tutorials',
                   onTap: () {},
                 ),
                 _HelpTile(
-                  icon: Icons.location_on,
-                  iconColor: Colors.red,
-                  iconBgColor: const Color(0xFFFFEBEE),
+                  icon: Icons.location_on_rounded,
+                  color: Colors.redAccent,
                   title: 'Hub Locator',
                   onTap: () {},
                 ),
                 _HelpTile(
-                  icon: Icons.info,
-                  iconColor: Colors.teal,
-                  iconBgColor: const Color(0xFFE0F2F1),
+                  icon: Icons.info_rounded,
+                  color: Colors.tealAccent,
                   title: 'About App',
                   onTap: () {},
                 ),
@@ -245,15 +224,13 @@ class HelpCenterScreen extends StatelessWidget {
 
 class _HelpTile extends StatelessWidget {
   final IconData icon;
-  final Color iconColor;
-  final Color iconBgColor;
+  final Color color;
   final String title;
   final VoidCallback onTap;
 
   const _HelpTile({
     required this.icon,
-    required this.iconColor,
-    required this.iconBgColor,
+    required this.color,
     required this.title,
     required this.onTap,
   });
@@ -262,41 +239,73 @@ class _HelpTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(25),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-          border: Border.all(color: Colors.grey.shade100),
+          color: const Color(0xFF1E1E1E),
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: Colors.white.withOpacity(0.03)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: iconBgColor,
+                color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Icon(icon, color: iconColor, size: 28),
+              child: Icon(icon, color: color, size: 28),
             ),
             const SizedBox(height: 12),
             Text(
               title,
               style: const TextStyle(
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: Colors.white,
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HelplineTile extends StatelessWidget {
+  final String number;
+  final Color yellow;
+  final VoidCallback onTap;
+
+  const _HelplineTile({required this.number, required this.yellow, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(15),
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.03),
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(color: Colors.white.withOpacity(0.05)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.phone_rounded, color: yellow, size: 22),
+              const SizedBox(width: 15),
+              Text(
+                number,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white),
+              ),
+              const Spacer(),
+              const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey),
+            ],
+          ),
         ),
       ),
     );

@@ -7,6 +7,7 @@ import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+import 'package:Maxryd_app/core/constants/api_constants.dart';
 
 class UserAgreementScreen extends StatefulWidget {
   const UserAgreementScreen({super.key});
@@ -184,7 +185,7 @@ By clicking “I Agree”, you confirm that you have read, understood, and accep
 
                                 final response = await http.put(
                                   Uri.parse(
-                                      'http://192.168.1.43:5008/api/driver/agreement'),
+                                      '${ApiConstants.baseUrl}/api/driver/agreement'),
                                   headers: {
                                     'Content-Type': 'application/json',
                                     'Accept': 'application/json',

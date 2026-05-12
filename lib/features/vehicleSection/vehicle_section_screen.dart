@@ -5,29 +5,31 @@ class VehicleSectionScreen extends StatelessWidget {
   final DriverProfile? driverProfile;
   const VehicleSectionScreen({super.key, this.driverProfile});
 
-  static const yellow = Color(0xFFFFD600);
+  static const yellow = Color(0xFFf5c034);
+  static const darkBg = Colors.black;
+  static const darkCard = Color(0xFF1E1E1E);
 
   @override
   Widget build(BuildContext context) {
     final vehicle = driverProfile?.vehicle;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB),
+      backgroundColor: darkBg,
       appBar: AppBar(
-        backgroundColor: yellow,
+        backgroundColor: darkBg,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: yellow),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'My Vehicle',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 18),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.black),
+            icon: const Icon(Icons.refresh_rounded, color: yellow),
             onPressed: () {},
           ),
         ],
@@ -35,44 +37,53 @@ class VehicleSectionScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Vehicle ID Card
+            // Vehicle ID Card (Premium Design)
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 30),
+                padding: const EdgeInsets.symmetric(vertical: 40),
                 decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(24),
+                  gradient: LinearGradient(
+                    colors: [darkCard, Colors.black],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(35),
+                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 20, offset: const Offset(0, 10)),
+                  ],
                 ),
                 child: Column(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: const BoxDecoration(
-                        color: yellow,
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: yellow.withOpacity(0.1),
                         shape: BoxShape.circle,
+                        border: Border.all(color: yellow.withOpacity(0.2)),
                       ),
-                      child: const Icon(Icons.electric_scooter, color: Colors.black, size: 32),
+                      child: const Icon(Icons.electric_scooter_rounded, color: yellow, size: 40),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
                     Text(
                       vehicle?.vehicleId ?? "NOT ASSIGNED",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "VEHICLE ID",
+                    const SizedBox(height: 10),
+                    Text(
+                      "VEHICLE IDENTIFICATION",
                       style: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 2,
+                        color: yellow.withOpacity(0.7),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 3,
                       ),
                     ),
                   ],
@@ -82,33 +93,42 @@ class VehicleSectionScreen extends StatelessWidget {
 
             // Specifications Section
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(25),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.grey.shade200),
+                  color: darkCard,
+                  borderRadius: BorderRadius.circular(35),
+                  border: Border.all(color: Colors.white.withOpacity(0.05)),
                 ),
                 child: Column(
                   children: [
                     _SpecRow(
-                      icon: Icons.confirmation_number_outlined,
+                      icon: Icons.confirmation_number_rounded,
                       label: "Chassis Number",
                       value: vehicle?.chassisNo ?? "---",
+                      yellow: yellow,
                     ),
-                    const Divider(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Divider(color: Colors.white.withOpacity(0.05), thickness: 1),
+                    ),
                     _SpecRow(
-                      icon: Icons.category_outlined,
+                      icon: Icons.category_rounded,
                       label: "Vehicle Type",
                       value: vehicle?.type ?? "---",
+                      yellow: yellow,
                     ),
-                    const Divider(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: Divider(color: Colors.white.withOpacity(0.05), thickness: 1),
+                    ),
                     _SpecRow(
-                      icon: Icons.info_outline,
-                      label: "Status",
+                      icon: Icons.info_rounded,
+                      label: "Current Status",
                       value: vehicle?.status?.toUpperCase() ?? "---",
-                      valueColor: vehicle?.status == "assigned" ? Colors.green : Colors.orange,
+                      valueColor: vehicle?.status == "assigned" ? Colors.greenAccent : yellow,
+                      yellow: yellow,
                     ),
                   ],
                 ),
@@ -117,33 +137,49 @@ class VehicleSectionScreen extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            // Quick Actions
+            // Quick Actions Header
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 25),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Vehicle Services",
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+
+            // Quick Actions Grid/List
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
                   _ActionItem(
                     title: "Report Maintenance",
-                    icon: Icons.build_circle_outlined,
+                    icon: Icons.build_circle_rounded,
                     onTap: () {},
+                    yellow: yellow,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 15),
                   _ActionItem(
                     title: "Service History",
-                    icon: Icons.history,
+                    icon: Icons.history_edu_rounded,
                     onTap: () {},
+                    yellow: yellow,
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 15),
                   _ActionItem(
                     title: "Request Vehicle Return",
-                    icon: Icons.assignment_return_outlined,
-                    textColor: Colors.red,
+                    icon: Icons.assignment_return_rounded,
+                    textColor: Colors.redAccent,
                     onTap: () {},
+                    yellow: yellow,
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 50),
           ],
         ),
       ),
@@ -156,32 +192,38 @@ class _SpecRow extends StatelessWidget {
   final String label;
   final String value;
   final Color? valueColor;
+  final Color yellow;
 
   const _SpecRow({
     required this.icon,
     required this.label,
     required this.value,
     this.valueColor,
+    required this.yellow,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Colors.grey[400], size: 22),
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(color: yellow.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
+          child: Icon(icon, color: yellow, size: 22),
+        ),
         const SizedBox(width: 15),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(color: Colors.grey[500], fontSize: 12)),
-              const SizedBox(height: 2),
+              Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 4),
               Text(
                 value,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: valueColor ?? Colors.black87,
+                  color: valueColor ?? Colors.white,
                 ),
               ),
             ],
@@ -197,42 +239,47 @@ class _ActionItem extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   final Color? textColor;
+  final Color yellow;
 
   const _ActionItem({
     required this.title,
     required this.icon,
     required this.onTap,
     this.textColor,
+    required this.yellow,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade100),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, color: textColor ?? Colors.black, size: 22),
-            const SizedBox(width: 15),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: textColor ?? Colors.black87,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E1E1E),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white.withOpacity(0.03)),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: textColor ?? yellow, size: 24),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: textColor ?? Colors.white,
+                  ),
                 ),
               ),
-            ),
-            Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey[300]),
-          ],
+              Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey[700]),
+            ],
+          ),
         ),
       ),
     );

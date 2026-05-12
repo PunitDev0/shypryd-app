@@ -1,5 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:Maxryd_app/features/auth/presentation/bloc/auth_state.dart';
 import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
 import 'package:Maxryd_app/features/onboarding/presentation/bloc/onboarding_bloc.dart';
@@ -16,10 +17,15 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
+  AnimationController? _animationController;
+  Animation<Offset>? _slideAnimation;
+  AnimationController? _pulseController;
+  Animation<double>? _pulseAnimation;
+
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
-  final String _countryCode = '+91'; // From screenshot
+  final String _countryCode = '+91';
   bool _isOtpMode = false;
   int _resendTimer = 30;
   Timer? _timer;
@@ -28,7 +34,40 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    // Timer starts only after OTP sent
+    final controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, -1.5), // Start above the screen
+      end: Offset.zero,             // End at center
+    ).animate(CurvedAnimation(
+      parent: controller,
+      curve: Curves.easeOutBack,
+    ));
+
+    _animationController = controller;
+    _animationController!.forward();
+
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+
+    _pulseAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(parent: _pulseController!, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController?.dispose();
+    _pulseController?.dispose();
+    _timer?.cancel();
+    _phoneController.dispose();
+    _otpController.dispose();
+    super.dispose();
   }
 
   void _startTimer() {
@@ -45,18 +84,25 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _phoneController.dispose();
-    _otpController.dispose();
-    super.dispose();
+  void _sendOtp() {
+    setState(() => _isLoading = true);
+    context.read<AuthBloc>().add(
+          LoginWithPhoneEvent(_countryCode + _phoneController.text),
+        );
+  }
+
+  void _verifyOtp() {
+    setState(() => _isLoading = true);
+    final fullPhone = _countryCode + _phoneController.text;
+    context.read<AuthBloc>().add(
+          VerifyOtpEvent(fullPhone, _otpController.text),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF3F3F3),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) async {
           if (state is AuthPhoneSent) {
@@ -64,38 +110,22 @@ class _LoginPageState extends State<LoginPage> {
               _isOtpMode = true;
               _isLoading = false;
             });
-            _startTimer(); // Start countdown
+            _startTimer();
           } else if (state is AuthAuthenticated) {
-            setState(() {
-              _isLoading = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text('Authenticated! Welcome, ${state.user.phone}')),
-            );
-
-            // Save token securely
+            setState(() => _isLoading = false);
             final storage = FlutterSecureStorage();
-            await storage.write(
-                key: 'auth_token', value: state.authResponse.token);
+            await storage.write(key: 'auth_token', value: state.authResponse.token);
 
             if (state.isNewUser) {
-              // 🟡 Navigate to onboarding flow
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => BlocProvider(
-                    create: (_) => OnboardingBloc(),
-                    child: const OnboardingScreen(),
-                  ),
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Access Denied: Your number is not registered. Please contact the admin.'),
+                  backgroundColor: Colors.red,
                 ),
               );
             } else {
-              // ✅ Existing user goes directly to home
-              // Existing user → save driverId if available in state.user.id
               if (state.user.id.isNotEmpty) {
                 await storage.write(key: 'driverId', value: state.user.id);
-                print('Driver ID saved after login: ${state.user.id}');
               }
               Navigator.pushReplacement(
                 context,
@@ -103,323 +133,325 @@ class _LoginPageState extends State<LoginPage> {
               );
             }
           } else if (state is AuthError) {
-            setState(() {
-              _isLoading = false;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
+            setState(() => _isLoading = false);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
           }
         },
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: SingleChildScrollView(
-              // Handles keyboard scroll
-              child: ConstrainedBox(
-                // Ensures full height for centering
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top -
-                      MediaQuery.of(context).padding.bottom,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.45,
+                decoration: const BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(80),
+                    bottomRight: Radius.circular(80),
+                  ),
                 ),
-                child: IntrinsicHeight(
-                  // Adapts to content height
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(80),
+                    bottomRight: Radius.circular(80),
+                  ),
+                  child: Stack(
                     children: [
-                      const SizedBox(height: 100), // Top spacing for status bar
-                      const Text(
-                        'MaxRyd',
-                        style: TextStyle(
-                          fontSize: 52, // Slightly smaller for responsiveness
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      const SizedBox(height: 80),
-                      const Text(
-                        'Driver App',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Welcome back! Please login to continue.',
-                        style: TextStyle(
-                          color: Colors.grey[500],
-                          fontSize: 16,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 40),
-                      if (!_isOtpMode) ...[
-                        // Phone input mode
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: TextFormField(
-                            controller: _phoneController,
-                            keyboardType: TextInputType.phone,
-                            cursorColor: Colors.black,
-                            decoration: InputDecoration(
-                              labelText: 'Enter Your Phone Number',
-                              labelStyle: const TextStyle(color: Colors.black),
-                              prefixText: '$_countryCode ',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 188, 188,
-                                      188), // Unfocused border color
-                                  width: 1.5, // Border thickness
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Color(
-                                      0xFFf5c034), // Focused border color (blue)
-                                  width: 1.5,
-                                ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                            maxLength: 10,
-                            onFieldSubmitted: (value) {
-                              if (value.length == 10) {
-                                _sendOtp();
-                              }
-                            },
-                          ),
-                        ),
-                      ] else ...[
-                        // OTP mode
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: TextFormField(
-                            readOnly: true,
-                            controller: TextEditingController(
-                                text: _countryCode + _phoneController.text),
-                            decoration: InputDecoration(
-                              labelText: 'Phone Number',
-                              labelStyle: const TextStyle(color: Colors.black),
-                              prefixIcon: const Icon(Icons.phone),
-                              suffixIcon: IconButton(
-                                icon: const Text(
-                                  'Edit',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isOtpMode = false;
-                                    _otpController.clear();
-                                    _timer?.cancel(); // Stop timer on edit
-                                  });
-                                },
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 188, 188,
-                                      188), // Unfocused border color
-                                  width: 1.5, // Border thickness
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Color(
-                                      0xFFf5c034), // Focused border color (blue)
-                                  width: 1.5,
-                                ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: TextFormField(
-                            controller: _otpController,
-                            keyboardType: TextInputType.number,
-                            maxLength: 6,
-                            decoration: InputDecoration(
-                              labelText: 'Enter OTP',
-                              labelStyle: const TextStyle(color: Colors.black),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Color.fromARGB(255, 188, 188,
-                                      188), // Unfocused border color
-                                  width: 1.5, // Border thickness
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Color(
-                                      0xFFf5c034), // Focused border color (blue)
-                                  width: 1.5,
-                                ),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: const BorderSide(
-                                  color: Colors.red,
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                            onFieldSubmitted: (value) {
-                              if (value.length == 6) {
-                                _verifyOtp();
-                              }
-                            },
-                          ),
-                        ),
-                      ],
-                      if (!_isOtpMode) ...[
-                        const SizedBox(height: 60),
-                      ] else ...[
-                        const SizedBox(height: 30),
-                      ],
-                      // const SizedBox(height: 30),
-                      BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          return SizedBox(
-                            width: double.infinity,
-                            height: 50,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              child: ElevatedButton(
-                                onPressed: _isLoading
-                                    ? null
-                                    : () {
-                                        if (!_isOtpMode) {
-                                          if (_phoneController.text.length ==
-                                              10) {
-                                            _sendOtp();
-                                          }
-                                        } else {
-                                          if (_otpController.text.length == 6) {
-                                            _verifyOtp();
-                                          }
-                                        }
+                      Center(
+                        child: (_slideAnimation != null && _pulseAnimation != null) 
+                          ? SlideTransition(
+                              position: _slideAnimation!,
+                              child: SizedBox(
+                                height: 380,
+                                width: 380,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    // Taillight Glow (Red) - Top side when rotated
+                                    AnimatedBuilder(
+                                      animation: _pulseAnimation!,
+                                      builder: (context, child) {
+                                        return Positioned(
+                                          top: 70, 
+                                          left: 0,
+                                          right: 0,
+                                          child: Center(
+                                            child: Container(
+                                              width: 40,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.redAccent.withOpacity(0.9 * _pulseAnimation!.value),
+                                                    blurRadius: 50 * _pulseAnimation!.value,
+                                                    spreadRadius: 20 * _pulseAnimation!.value,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
                                       },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFf5c034),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                child: _isLoading
-                                    ? const CircularProgressIndicator(
-                                        color: Colors.black)
-                                    : Text(
-                                        _isOtpMode ? 'Verify OTP' : 'Send OTP',
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                    ),
+                                    // Headlight Glow (White/Yellow) - Bottom side when rotated
+                                    AnimatedBuilder(
+                                      animation: _pulseAnimation!,
+                                      builder: (context, child) {
+                                        return Positioned(
+                                          bottom: 80,
+                                          left: 0,
+                                          right: 0,
+                                          child: Center(
+                                            child: Container(
+                                              width: 60,
+                                              height: 60,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.yellowAccent.withOpacity(0.8 * _pulseAnimation!.value),
+                                                    blurRadius: 70 * _pulseAnimation!.value,
+                                                    spreadRadius: 30 * _pulseAnimation!.value,
+                                                  ),
+                                                  BoxShadow(
+                                                    color: Colors.white.withOpacity(0.6 * _pulseAnimation!.value),
+                                                    blurRadius: 30 * _pulseAnimation!.value,
+                                                    spreadRadius: 10 * _pulseAnimation!.value,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    Transform.rotate(
+                                      angle: math.pi, // Rotate 180 degrees
+                                      child: Image.asset(
+                                        'assets/images/login_scooter.png',
+                                        height: 380,
+                                        fit: BoxFit.contain,
                                       ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Transform.rotate(
+                              angle: math.pi,
+                              child: Image.asset(
+                                'assets/images/login_scooter.png',
+                                height: 380,
+                                fit: BoxFit.contain,
                               ),
                             ),
-                          );
-                        },
                       ),
-                      if (_isOtpMode) ...[
-                        const SizedBox(height: 20),
-                        GestureDetector(
-                          onTap: _resendTimer > 0
-                              ? null
-                              : () {
-                                  _sendOtp(); // Re-trigger send OTP event
-                                },
-                          child: Text(
-                            _resendTimer > 0
-                                ? "Didn't receive the code? Resend in $_resendTimer s"
-                                : "Didn't receive the code? Resend",
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 14,
-                              decoration: _resendTimer > 0
-                                  ? null
-                                  : TextDecoration.underline,
-                            ),
-                          ),
-                        ),
-                      ] else ...[
-                        const Spacer(), // Pushes terms to bottom
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            'By continuing, you agree to our Terms of Service and Privacy Policy.',
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 12,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
                     ],
                   ),
                 ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 40),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Welcome to ',
+                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.black),
+                        ),
+                        const Text(
+                          'ShypRyd',
+                          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Icon(Icons.bolt, color: Colors.greenAccent[700], size: 28),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 40),
+                    if (!_isOtpMode) _buildModernPhoneField() else _buildModernOtpField(),
+                    const SizedBox(height: 30),
+                    _buildModernSubmitButton(),
+                    if (_isOtpMode) ...[
+                      const SizedBox(height: 20),
+                      _buildResendSection(),
+                    ],
+                    const SizedBox(height: 60),
+                    Center(
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          'An invitation code is not required',
+                          style: TextStyle(
+                            color: Colors.greenAccent[700],
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  void _sendOtp() {
-    setState(() {
-      _isLoading = true;
-    });
-    context.read<AuthBloc>().add(
-          LoginWithPhoneEvent(_countryCode + _phoneController.text),
-        );
+  Widget _buildModernPhoneField() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(50),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            radius: 12,
+            backgroundColor: Colors.black,
+            child: Icon(Icons.public, size: 14, color: Colors.white),
+          ),
+          const SizedBox(width: 8),
+          const Icon(Icons.arrow_drop_down, color: Colors.grey, size: 20),
+          const SizedBox(width: 4),
+          const Text('+91', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextFormField(
+              controller: _phoneController,
+              keyboardType: TextInputType.phone,
+              cursorColor: Colors.black,
+              decoration: const InputDecoration(
+                hintText: '000 000 0000',
+                hintStyle: TextStyle(color: Colors.grey),
+                border: InputBorder.none,
+                counterText: "",
+              ),
+              maxLength: 10,
+              style: const TextStyle(fontSize: 16, letterSpacing: 1.2),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  void _verifyOtp() {
-    setState(() {
-      _isLoading = true;
-    });
-    final fullPhone = _countryCode + _phoneController.text;
-    context.read<AuthBloc>().add(
-          VerifyOtpEvent(fullPhone, _otpController.text),
-        );
+  Widget _buildModernOtpField() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(50),
+            border: Border.all(color: Colors.black12),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.phone, size: 18, color: Colors.black54),
+              const SizedBox(width: 12),
+              Text(
+                '$_countryCode ${_phoneController.text}',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isOtpMode = false;
+                    _otpController.clear();
+                    _timer?.cancel();
+                  });
+                },
+                child: const Text('Edit', style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(50),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+            ],
+          ),
+          child: TextFormField(
+            controller: _otpController,
+            keyboardType: TextInputType.number,
+            maxLength: 6,
+            textAlign: TextAlign.center,
+            decoration: const InputDecoration(
+              hintText: 'ENTER OTP',
+              hintStyle: TextStyle(color: Colors.grey, letterSpacing: 2),
+              border: InputBorder.none,
+              counterText: "",
+            ),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 8),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildModernSubmitButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 56,
+      child: ElevatedButton(
+        onPressed: _isLoading
+            ? null
+            : () {
+                if (!_isOtpMode) {
+                  if (_phoneController.text.length == 10) _sendOtp();
+                } else {
+                  if (_otpController.text.length == 6) _verifyOtp();
+                }
+              },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+          elevation: 0,
+        ),
+        child: _isLoading
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Text(
+                _isOtpMode ? 'VERIFY CODE' : 'CONTINUE',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildResendSection() {
+    return GestureDetector(
+      onTap: _resendTimer > 0 ? null : () => _sendOtp(),
+      child: Center(
+        child: Text(
+          _resendTimer > 0 ? "Resend in ${_resendTimer}s" : "Resend code",
+          style: TextStyle(
+            color: Colors.grey[600],
+            fontSize: 14,
+            decoration: _resendTimer > 0 ? null : TextDecoration.underline,
+          ),
+        ),
+      ),
+    );
   }
 }

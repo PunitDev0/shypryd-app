@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:Maxryd_app/core/constants/api_constants.dart';
 import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_bloc.dart';
 import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_event.dart';
 import 'package:Maxryd_app/features/onboarding/presentation/bloc/bank/bank_state.dart';
@@ -59,7 +60,7 @@ class _BankDetailsScreenState extends State<BankDetailsScreen> {
       return;
     }
     final response = await http.put(
-      Uri.parse('http://192.168.1.43:5008/api/driver/bank'),
+      Uri.parse('${ApiConstants.baseUrl}/api/driver/bank'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

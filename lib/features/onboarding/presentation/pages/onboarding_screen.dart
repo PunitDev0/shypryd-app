@@ -17,6 +17,7 @@ import 'personal_details_screen.dart';
 import 'package:Maxryd_app/features/home/presentation/pages/home_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:Maxryd_app/core/constants/api_constants.dart';
 // import 'profile_awaiting_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -224,7 +225,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     try {
                       final response = await http.post(
                         Uri.parse(
-                            'http://192.168.1.43:5008/api/driver/complete-profile'),
+                            '${ApiConstants.baseUrl}/api/driver/complete-profile'),
                         headers: {
                           'Content-Type': 'application/json',
                           'Accept': 'application/json',
